@@ -69,7 +69,10 @@ node tests/fixtures/generate-pdf.mjs   # quantified.pdf (hand-built PDF with a r
   concatenated the candidate's own name with the next line's section header and reported it back
   as a "keyword," which is exactly the kind of wrong-looking output that kills trust in the tool.
   Import types from this file with `import type` — Node's native TS stripping (used by the unit
-  tests) erases type-only imports but breaks on value imports of erased symbols.
+  tests) erases type-only imports but breaks on value imports of erased symbols. `BAND_RANGES`
+  is the single source of truth for score-band cutoffs; `bandFor()` and the "What your score
+  means" legend in `components/HowItWorks.tsx` both read it, so don't hardcode the numeric
+  cutoffs (90/80/70/60/40) anywhere else, they'd drift.
 - `pricing.ts` — the only place the actual naira figures live. Never imported by anything that
   renders text to the page.
 - `whatsapp.ts` — builds the WhatsApp deep link and the two message templates (priced request vs.
@@ -89,9 +92,24 @@ simpler path: fixed number, no form, no price, ever.
 **Flow, orchestrated in `app/page.tsx`:** file drop → `extractDocument` → `analyzeCv` (padded to
 a minimum ~3.6s "Analyzing…" state via `Promise.all` with a timer, so small files don't feel
 instant and unconvincing) → `<Report>` renders the score, hard gate failures, and the 8-category
-breakdown (each row an accordion, collapsed by default) and, on clicking the primary CTA, expands
-`<RequestForm>` inline (name, experience band, service, live price once both are picked) → submit
-builds the message via `whatsapp.ts` and opens it in a new tab.
+breakdown (each row an accordion, collapsed by default), then a personalized "Here's how you can
+fix this yourself" step list, then `<RequestForm>` (name, experience band, service, live price
+once both are picked). Submit builds the message via `whatsapp.ts` and opens it in a new tab.
+
+**The fix-it-yourself steps are generated, not static copy.** `buildFixSteps()` in `Report.tsx`
+turns each hard gate failure and each weak/needs-work category into one step, using that
+category's own `findings[0]` (the specific thing detected in *this* file) plus its `whatToDo[0]`
+action, capped at 6 steps and ordered worst-first. Two different CVs should produce two different
+step lists. Don't replace this with a static paragraph, that was the previous version and it read
+as generic advice instead of a real diagnosis. The old explicit "this takes a weekend and is easy
+to get wrong" framing was deliberately removed too — the difficulty should be felt from the
+length and specificity of the step list itself, not stated outright.
+
+There are two CTA entry points into the same `showForm` state and the same `<RequestForm>`
+instance: `data-testid="secondary-cta"` sits right under the score (paired with a one-line
+agitation sentence), `data-testid="primary-cta"` sits after the fix-it-yourself steps. Both call
+`openForm()`, which sets `showForm` and scrolls to the form's ref (`formSlotRef`). Keep it to one
+`<RequestForm>` instance; don't duplicate the form itself at both spots.
 
 **Page structure:** Navbar → Hero → Report (only once a file's been processed) → How it Works →
 Footer. There is no About or FAQ section, they were cut deliberately as not needed. Don't re-add

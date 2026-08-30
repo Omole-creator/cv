@@ -1,4 +1,14 @@
 import { UploadCloud, ScanSearch, SignpostBig } from "lucide-react";
+import { BAND_LABELS, BAND_RANGES } from "@/lib/analyzeCv";
+
+const DOT_COLOR: Record<string, string> = {
+  excellent: "bg-gold",
+  "very-strong": "bg-gold",
+  strong: "bg-gold-600",
+  "needs-work": "bg-ink-400",
+  weak: "bg-red-400",
+  critical: "bg-red-600",
+};
 
 const STEPS = [
   {
@@ -49,6 +59,29 @@ export default function HowItWorks() {
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="mx-auto mt-14 max-w-lg">
+          <h3 className="text-center font-display text-xl font-medium text-ink-900">
+            What your score means
+          </h3>
+          <ul className="mt-6 divide-y divide-ink-900/10 rounded-xl border border-ink-900/10">
+            {BAND_RANGES.map((range) => (
+              <li key={range.band} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                <span className="flex items-center gap-2.5 text-sm text-ink-600">
+                  <span className={`h-2 w-2 rounded-full ${DOT_COLOR[range.band]}`} />
+                  {range.min}
+                  {" to "}
+                  {range.max}
+                </span>
+                <span className="text-sm font-medium text-ink-900">{BAND_LABELS[range.band]}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-center text-sm text-ink-400">
+            Aim for 70 or higher to stand a real chance. Below that, most CVs are getting filtered
+            out before a person ever opens them.
+          </p>
         </div>
       </div>
     </section>

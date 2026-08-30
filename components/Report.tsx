@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AlertTriangle, ArrowRight, ChevronDown } from "lucide-react";
-import { BAND_LABELS, CategoryReport, CvReport } from "@/lib/analyzeCv";
+import { BAND_LABELS, CategoryReport, CvReport, Finding } from "@/lib/analyzeCv";
 import ScoreCard from "./ScoreCard";
 import RequestForm from "./RequestForm";
 
@@ -29,22 +29,50 @@ const VERDICT_LABELS: Record<CategoryReport["verdict"], string> = {
   "info-only": "Self-check",
 };
 
-const KEYWORD_GUIDE: { sector: string; phrases: string[] }[] = [
-  { sector: "Banking & fintech", phrases: ["Stakeholder Management", "Regulatory Compliance", "Reconciliation"] },
-  { sector: "Admin & operations", phrases: ["Vendor Management", "Process Improvement", "Purchase Orders"] },
-  { sector: "Customer service", phrases: ["Client Retention", "SLA Management", "Escalation Handling"] },
-];
+const HARD_GATE_FIX: Record<string, string> = {
+  "em-dash": "Go through it line by line and swap every dash used mid sentence for a period or a comma.",
+  "no-numbers": "Go back through every bullet and attach a real number to it, a percentage, a count, a naira figure, anything measurable.",
+  "table-layout": "Rebuild that section as plain text lines instead of a table.",
+  "unreadable-file": "Re-save this as a real PDF or Word file with selectable text, not an image or a scan.",
+};
 
-const MANUAL_FIX_NARRATIVE =
-  "Fixing all of this yourself usually means pulling 5 to 7 current job ads in your exact field, reading them closely for the phrases that keep repeating, then going back through every section above rewriting it by hand without turning it into an obvious keyword dump. None of it is complicated on its own. It's just slow, and easy to slightly overdo or underdo. Most people doing it properly lose a full weekend to it.";
+function buildFixSteps(report: CvReport): string[] {
+  const steps: string[] = [];
+
+  report.hardGateFailures.forEach((f: Finding) => {
+    const fix = HARD_GATE_FIX[f.id];
+    steps.push(fix ? `${f.detail} ${fix}` : f.detail);
+  });
+
+  const problemCategories = [...report.categories]
+    .filter((c) => c.verdict === "weak" || c.verdict === "needs-work")
+    .sort((a, b) => a.pointsEarned / a.maxPoints - b.pointsEarned / b.maxPoints);
+
+  problemCategories.forEach((c) => {
+    const lead = c.findings[0];
+    const action = c.whatToDo[0];
+    steps.push(lead && action ? `${lead} ${action}` : action ?? lead ?? c.summary);
+  });
+
+  return steps.slice(0, 6);
+}
 
 export default function Report({ report, fileName }: { report: CvReport; fileName?: string }) {
   const [showForm, setShowForm] = useState(false);
+  const formSlotRef = useRef<HTMLDivElement>(null);
 
   const weakestCategory = [...report.categories]
     .filter((c) => c.verdict !== "info-only")
     .sort((a, b) => a.pointsEarned / a.maxPoints - b.pointsEarned / b.maxPoints)[0];
   const topFindingLabel = report.hardGateFailures[0]?.label ?? weakestCategory?.label;
+  const fixSteps = buildFixSteps(report);
+
+  const openForm = () => {
+    setShowForm(true);
+    requestAnimationFrame(() => {
+      formSlotRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  };
 
   return (
     <section id="report" data-testid="report" className="mx-auto max-w-2xl px-5 pb-20">
@@ -54,6 +82,24 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
           <p className="font-display text-lg font-medium text-ink-900">{BAND_LABELS[report.band]}</p>
           <p className="text-sm text-ink-400">{BAND_COPY[report.band]}</p>
           {fileName && <p className="text-xs text-ink-400">{fileName}</p>}
+        </div>
+
+        <div className="mt-6 rounded-xl border border-ink-900/10 bg-paper p-4 text-center">
+          <p className="text-sm text-ink-600">
+            Most people don&apos;t find out their CV was the problem until months of silence go
+            by, interview after interview that never even got scheduled.
+          </p>
+          {!showForm && (
+            <button
+              type="button"
+              onClick={openForm}
+              data-testid="secondary-cta"
+              className="mt-3 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+            >
+              Get a Professionally Written CV
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
         {report.hardGateFailures.length > 0 && (
@@ -86,44 +132,41 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
           </div>
         )}
 
-        {report.categories.length > 0 && (
+        {fixSteps.length > 0 && (
           <div className="mt-8 rounded-xl bg-ink-900 p-5 text-white">
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gold">
-              What fixing this yourself actually looks like
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gold">
+              Here&apos;s how you can fix this yourself
             </h3>
-            <p className="text-sm leading-relaxed text-white/85">{MANUAL_FIX_NARRATIVE}</p>
+            <ol className="space-y-4">
+              {fixSteps.map((step, i) => (
+                <li key={step} className="flex gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-bold text-ink-900">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm leading-relaxed text-white/85">{step}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         )}
 
-        <div className="mt-8">
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-600">
-            A few phrases worth knowing, by sector
-          </h3>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {KEYWORD_GUIDE.map((group) => (
-              <div key={group.sector} className="rounded-xl border border-ink-900/10 p-3.5">
-                <p className="text-xs font-semibold text-ink-900">{group.sector}</p>
-                <ul className="mt-1.5 space-y-1 text-xs text-ink-400">
-                  {group.phrases.map((phrase) => (
-                    <li key={phrase}>{phrase}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-9 text-center">
+        <div ref={formSlotRef} className="mt-9 text-center">
           {!showForm ? (
-            <button
-              type="button"
-              onClick={() => setShowForm(true)}
-              data-testid="primary-cta"
-              className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
-            >
-              Get a Professionally Written CV
-              <ArrowRight className="h-4 w-4" />
-            </button>
+            <>
+              <p className="mx-auto mb-4 max-w-sm text-sm text-ink-400">
+                If you&apos;re tired of the trial and error and really want to get it right once
+                and for all, send us a message now.
+              </p>
+              <button
+                type="button"
+                onClick={openForm}
+                data-testid="primary-cta"
+                className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+              >
+                Get a Professionally Written CV
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </>
           ) : (
             <RequestForm />
           )}

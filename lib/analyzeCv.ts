@@ -19,6 +19,18 @@ export const BAND_LABELS: Record<Band, string> = {
   critical: "Critical",
 };
 
+// Single source of truth for score bands: bandFor() below and the on-site
+// score guide (components/HowItWorks.tsx) both read from this list, so the
+// ranges shown to visitors can never drift from what actually gets computed.
+export const BAND_RANGES: { band: Band; min: number; max: number }[] = [
+  { band: "excellent", min: 90, max: 100 },
+  { band: "very-strong", min: 80, max: 89 },
+  { band: "strong", min: 70, max: 79 },
+  { band: "needs-work", min: 60, max: 69 },
+  { band: "weak", min: 40, max: 59 },
+  { band: "critical", min: 0, max: 39 },
+];
+
 export type CategoryReport = {
   id: string;
   label: string;
@@ -526,12 +538,8 @@ function categoryTruthfulness(): CategoryReport {
 }
 
 function bandFor(score: number): Band {
-  if (score >= 90) return "excellent";
-  if (score >= 80) return "very-strong";
-  if (score >= 70) return "strong";
-  if (score >= 60) return "needs-work";
-  if (score >= 40) return "weak";
-  return "critical";
+  const match = BAND_RANGES.find((range) => score >= range.min && score <= range.max);
+  return match ? match.band : "critical";
 }
 
 export function analyzeCv(doc: ExtractedDocument): CvReport {
