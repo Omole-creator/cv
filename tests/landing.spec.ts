@@ -14,13 +14,24 @@ test("logo is visible and no price is present on initial load", async ({ page })
   await expect(page.locator("body")).not.toContainText("₦");
 });
 
-test("a docx with a table and an em dash surfaces both hard-gate failures", async ({ page }) => {
+test("a docx with a table is a hard-gate failure; an em dash is only a writing-style note", async ({
+  page,
+}) => {
   await page.goto("/");
   await uploadFile(page, "table-and-emdash.docx");
   await expect(page.getByTestId("report")).toBeVisible({ timeout: 15_000 });
   const report = page.getByTestId("report");
-  await expect(report).toContainText(/dash/i);
-  await expect(report).toContainText(/table/i);
+  const hardGates = page.getByTestId("hard-gate-failures");
+
+  // The table is a genuine hard gate, so it shows up in Critical failures.
+  await expect(hardGates).toBeVisible();
+  await expect(hardGates).toContainText(/table/i);
+
+  // An em dash is JobMingle's in-house writing rule, not something that
+  // should fail an external CV, so it must not appear as a critical
+  // failure, only as a smaller note under Writing Style & Language.
+  await expect(hardGates).not.toContainText(/em dash/i);
+  await expect(report).toContainText(/em dash/i);
 });
 
 test("a well quantified pdf scores decently with no hard gates", async ({ page }) => {

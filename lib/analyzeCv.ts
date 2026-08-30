@@ -131,27 +131,22 @@ function verdictFor(pointsEarned: number, maxPoints: number): CategoryVerdict {
 }
 
 // --- Hard gates (careercv.md: automatic score cap regardless of category totals) ---
+// Em dashes are deliberately NOT a hard gate here: that's JobMingle's in-house
+// writing standard for CVs it writes itself, not a rule an external CV should
+// be failed against. It's still scored (as a deduction) inside categoryWriting.
 
-function checkEmDash(text: string): Finding | null {
-  const match = text.match(EM_DASH_PATTERN);
-  if (!match) return null;
-  return {
-    id: "em-dash",
-    label: "Dashes used as sentence breaks",
-    detail:
-      "ATS parsers and recruiters both read this as a rushed edit. House style is zero em dashes.",
-    example: match[0],
-  };
-}
-
-function checkNoDigitsAnywhere(lines: string[]): Finding | null {
-  const hasAnyDigit = lines.some((line) => /\d/.test(line));
+function checkNoDigitsInExperience(lines: string[]): Finding | null {
+  const block = findSection(lines, /^(work )?experience$/i);
+  // Numbers are only required in Work Experience. If we can't even find that
+  // section, there's nothing fair to check here.
+  if (block.length === 0) return null;
+  const hasAnyDigit = block.some((line) => /\d/.test(line));
   if (hasAnyDigit) return null;
   return {
     id: "no-numbers",
-    label: "No numbers anywhere in the document",
+    label: "No measurable achievements in Work Experience",
     detail:
-      "Not one figure, percentage, or count on the page. Without a single number, there's nothing for a hiring manager to measure your work against.",
+      "Not one figure, percentage, or count in your Experience section. Without at least one measurable achievement, there's nothing for a hiring manager to judge your work against.",
   };
 }
 
@@ -179,15 +174,21 @@ function unreadableFinding(fileType: ExtractedDocument["fileType"]): Finding {
 
 // --- Categories (careercv.md's 8 scored sections, weights preserved: 30/10/10/8/15/10/10/7 = 100) ---
 
+function experienceBullets(lines: string[]): string[] {
+  const block = findSection(lines, /^(work )?experience$/i);
+  const scope = block.length > 0 ? block : lines;
+  return scope.filter(looksLikeBullet);
+}
+
 function quantifiedRatio(lines: string[]): number {
-  const bullets = lines.filter(looksLikeBullet);
+  const bullets = experienceBullets(lines);
   if (bullets.length === 0) return 0;
   const quantified = bullets.filter((line) => /\d/.test(line));
   return quantified.length / bullets.length;
 }
 
 function categoryQuantified(lines: string[], ratio: number): CategoryReport {
-  const bullets = lines.filter(looksLikeBullet);
+  const bullets = experienceBullets(lines);
   const quantifiedBullets = bullets.filter((line) => /\d/.test(line));
   const weakExamples = bullets.filter((line) => !/\d/.test(line)).slice(0, 2);
 
@@ -201,10 +202,10 @@ function categoryQuantified(lines: string[], ratio: number): CategoryReport {
 
   const findings: string[] = [
     bullets.length
-      ? `${quantifiedBullets.length} of ${bullets.length} bullet-style lines include a number.`
-      : "We couldn't find clear bullet lines to check for results.",
+      ? `${quantifiedBullets.length} of ${bullets.length} bullets in your Experience section include a measurable achievement.`
+      : "We couldn't find clear bullet lines in your Experience section to check.",
   ];
-  weakExamples.forEach((line) => findings.push(`No number in: "${line}"`));
+  weakExamples.forEach((line) => findings.push(`No measurable achievement in: "${line}"`));
 
   return {
     id: "quantified",
@@ -215,12 +216,12 @@ function categoryQuantified(lines: string[], ratio: number): CategoryReport {
     summary:
       bullets.length === 0
         ? "We couldn't find bullet points to check for results."
-        : `About ${Math.round(ratio * 100)}% of your bullets show a measurable result.`,
+        : `About ${Math.round(ratio * 100)}% of your Experience bullets show a measurable achievement.`,
     findings,
     whatToDo: [
-      "Use this shape for every bullet: I did [what], using [how], which led to [result, with a number].",
-      "A number can be a percentage, a naira figure, a count, or time saved, anything a hiring manager can measure.",
-      "If you genuinely can't attach a number, describe the scale instead: team size, volume handled, how often.",
+      "Use this shape for every bullet: I did [what], using [how], which led to [result you can measure].",
+      "A measurable achievement can be a percentage, a naira figure, a count, or time saved, anything a hiring manager can weigh.",
+      "If you genuinely can't attach a figure, describe the scale instead: team size, volume handled, how often.",
     ],
   };
 }
@@ -240,7 +241,7 @@ function categorySummary(lines: string[]): CategoryReport {
         "Add 3 to 4 lines right under your name and contact details.",
         "Open with your current title and years of experience.",
         "Name 2 to 3 real strengths with specifics, not adjectives like \"hardworking\".",
-        "Close with one numbered achievement that also appears in your Experience section.",
+        "Close with one measurable achievement that also appears in your Experience section.",
       ],
     };
   }
@@ -261,8 +262,11 @@ function categorySummary(lines: string[]): CategoryReport {
   if (fillerFound.length) findings.push(`Filler language found: ${fillerFound.join(", ")}.`);
   if (firstPerson)
     findings.push('Opens in first person ("I am"/"I have"). House style keeps this implied, no "I".');
-  if (!hasNumber)
-    findings.push("No number in the summary. Echo your strongest Experience result here.");
+  findings.push(
+    hasNumber
+      ? "Includes a measurable achievement, that's worth the bonus point."
+      : "No measurable achievement in the summary yet. That's optional, especially early in your career, but adding one earns extra credit."
+  );
 
   return {
     id: "summary",
@@ -270,12 +274,12 @@ function categorySummary(lines: string[]): CategoryReport {
     pointsEarned: points,
     maxPoints: 10,
     verdict: verdictFor(points, 10),
-    summary: `${wordCount} words${hasNumber ? ", includes a number" : ", no number yet"}.`,
+    summary: `${wordCount} words${hasNumber ? ", includes a measurable achievement" : ""}.`,
     findings,
     whatToDo: [
       "3 to 4 lines. Open with your title and years of experience.",
       'Name 2 to 3 specific strengths, skip filler like "passionate" or "hardworking".',
-      "End with the one number that best proves you're good at the job, and make sure it also shows up in your Experience section.",
+      "If you have one, end with the measurable achievement that best proves you're good at the job, and make sure it also shows up in your Experience section.",
     ],
   };
 }
@@ -433,7 +437,7 @@ function categoryWriting(text: string, lines: string[]): CategoryReport {
 
   if (EM_DASH_PATTERN.test(text)) {
     points -= 2;
-    findings.push("Uses an em dash somewhere. House style is zero.");
+    findings.push("Uses an em dash somewhere. A period or a comma usually reads more natural.");
   }
   const stiffFound = STIFF_PHRASES.filter((p) => text.toLowerCase().includes(p));
   if (stiffFound.length) {
@@ -560,8 +564,7 @@ export function analyzeCv(doc: ExtractedDocument): CvReport {
   const ratio = quantifiedRatio(lines);
 
   const hardGateFailures = [
-    checkEmDash(text),
-    checkNoDigitsAnywhere(lines),
+    checkNoDigitsInExperience(lines),
     checkTable(doc.hasTable),
   ].filter((f): f is Finding => f !== null);
 

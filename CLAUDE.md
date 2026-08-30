@@ -55,15 +55,22 @@ node tests/fixtures/generate-pdf.mjs   # quantified.pdf (hand-built PDF with a r
   tags for the table hard gate). Images and text-less PDFs short-circuit to `isUnreadable: true`
   rather than attempting OCR — a CV that's just a photo genuinely can't be read by ATS software,
   so that fact itself becomes the finding instead of a workaround.
-- `analyzeCv.ts` — pure function, `ExtractedDocument -> CvReport`. Hard gates (em dash, no digits
-  anywhere, a real table) cap the total at 59 the same way `careercv.md`'s rubric caps it,
-  regardless of category totals. Below that, `categories` holds one `CategoryReport` per rubric
-  section (quantified achievements, summary, experience structure, skills, keywords, writing
-  style, formatting, truthfulness), each with its own points/findings/what-to-do list rendered as
-  an expandable row in `<Report>`. Everything is a coarse, honestly-labeled proxy, not the full
-  rubric test (e.g. quantified-bullet ratio counts digit-bearing lines that look like bullets, not
-  the rubric's full 3-part shape test; truthfulness can't be verified automatically at all, so it
+- `analyzeCv.ts` — pure function, `ExtractedDocument -> CvReport`. Hard gates (zero digits inside
+  the Work Experience section, a real table) cap the total at 59 the same way `careercv.md`'s
+  rubric caps it, regardless of category totals. An em dash is deliberately **not** a hard gate:
+  that's JobMingle's in-house writing rule for CVs it writes itself, not something fair to fail an
+  external CV against, so it only costs 2 points inside the Writing Style category. Numbers are
+  only ever required in Work Experience, no other category (summary, skills, etc.) penalizes their
+  absence, though a measurable achievement in the summary earns a small bonus if it's there.
+  `categories` holds one `CategoryReport` per rubric section (quantified achievements, summary,
+  experience structure, skills, keywords, writing style, formatting, truthfulness), each with its
+  own points/findings/what-to-do list rendered as an expandable row in `<Report>`. Everything is a
+  coarse, honestly-labeled proxy, not the full rubric test (e.g. quantified-bullet ratio, scoped to
+  bullets inside the Experience section, counts digit-bearing lines that look like bullets, not the
+  rubric's full 3-part shape test; truthfulness can't be verified automatically at all, so it
   auto-grants full credit and is presented as "self-check" guidance, never a fabricated score).
+  Findings and what-to-do text say "measurable achievement," never "number" or "include a number,"
+  that wording change was deliberate, keep it consistent in new categories.
   Any regex that scans a whole joined-text blob for multi-word phrases (see `categoryKeywords`)
   must operate per-line, not on `text` with `\n` treated as whitespace — a cross-line match once
   concatenated the candidate's own name with the next line's section header and reported it back
@@ -91,25 +98,31 @@ simpler path: fixed number, no form, no price, ever.
 
 **Flow, orchestrated in `app/page.tsx`:** file drop → `extractDocument` → `analyzeCv` (padded to
 a minimum ~3.6s "Analyzing…" state via `Promise.all` with a timer, so small files don't feel
-instant and unconvincing) → `<Report>` renders the score, hard gate failures, and the 8-category
-breakdown (each row an accordion, collapsed by default), then a personalized "Here's how you can
-fix this yourself" step list, then `<RequestForm>` (name, experience band, service, live price
-once both are picked). Submit builds the message via `whatsapp.ts` and opens it in a new tab.
+instant and unconvincing) → `<Report>` renders the score and band label (no descriptive sentence
+under it, straight to the findings), hard gate failures, the 8-category breakdown (each row an
+accordion, collapsed by default, "What to do" rendered as the same numbered-step style as the fix
+list below it), then a personalized "Here's how you can fix this yourself" step list, then
+`<RequestForm>` (name, experience band, service, live price once both are picked). Submit builds
+the message via `whatsapp.ts` and opens it in a new tab. `<ScoreCard>` (save/copy) comes after
+that, and the report closes with a short "Note" callout plus one more CTA below it.
 
 **The fix-it-yourself steps are generated, not static copy.** `buildFixSteps()` in `Report.tsx`
 turns each hard gate failure and each weak/needs-work category into one step, using that
 category's own `findings[0]` (the specific thing detected in *this* file) plus its `whatToDo[0]`
 action, capped at 6 steps and ordered worst-first. Two different CVs should produce two different
-step lists. Don't replace this with a static paragraph, that was the previous version and it read
-as generic advice instead of a real diagnosis. The old explicit "this takes a weekend and is easy
-to get wrong" framing was deliberately removed too — the difficulty should be felt from the
-length and specificity of the step list itself, not stated outright.
+step lists. Don't replace this with a static paragraph, that was an earlier version and it read as
+generic advice instead of a real diagnosis. There's no explicit "this takes a weekend and is easy
+to get wrong" framing anywhere, that was deliberately removed — the difficulty should be felt from
+the length and specificity of the step list itself, not stated outright.
 
 There are two CTA entry points into the same `showForm` state and the same `<RequestForm>`
-instance: `data-testid="secondary-cta"` sits right under the score (paired with a one-line
-agitation sentence), `data-testid="primary-cta"` sits after the fix-it-yourself steps. Both call
-`openForm()`, which sets `showForm` and scrolls to the form's ref (`formSlotRef`). Keep it to one
-`<RequestForm>` instance; don't duplicate the form itself at both spots.
+instance: `data-testid="primary-cta"` sits right after the fix-it-yourself steps,
+`data-testid="secondary-cta"` sits in the closing "Note" callout at the very bottom, after
+`<ScoreCard>`. Both call `openForm()`, which sets `showForm` and scrolls to the form's ref
+(`formSlotRef`). Keep it to one `<RequestForm>` instance; don't duplicate the form itself at both
+spots. `data-testid="hard-gate-failures"` scopes assertions to just the Critical Failures block,
+useful since a hard-gate-triggering finding may also get echoed into the always-visible fix-steps
+list further down the same page.
 
 **Page structure:** Navbar → Hero → Report (only once a file's been processed) → How it Works →
 Footer. There is no About or FAQ section, they were cut deliberately as not needed. Don't re-add

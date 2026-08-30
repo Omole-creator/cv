@@ -6,15 +6,6 @@ import { BAND_LABELS, CategoryReport, CvReport, Finding } from "@/lib/analyzeCv"
 import ScoreCard from "./ScoreCard";
 import RequestForm from "./RequestForm";
 
-const BAND_COPY: Record<CvReport["band"], string> = {
-  excellent: "Close to interview-ready. Minor polish only.",
-  "very-strong": "A few targeted fixes and this is in great shape.",
-  strong: "Good bones, but a couple of sections need real work.",
-  "needs-work": "Several sections below are worth fixing before this goes out again.",
-  weak: "Multiple core sections need a real rewrite, not just polish.",
-  critical: "This is very likely getting filtered out before a person opens it.",
-};
-
 const VERDICT_STYLES: Record<CategoryReport["verdict"], string> = {
   strong: "bg-gold-50 text-ink-900",
   "needs-work": "bg-ink-50 text-ink-600",
@@ -30,8 +21,7 @@ const VERDICT_LABELS: Record<CategoryReport["verdict"], string> = {
 };
 
 const HARD_GATE_FIX: Record<string, string> = {
-  "em-dash": "Go through it line by line and swap every dash used mid sentence for a period or a comma.",
-  "no-numbers": "Go back through every bullet and attach a real number to it, a percentage, a count, a naira figure, anything measurable.",
+  "no-numbers": "Go back through every bullet in that section and attach a real, measurable achievement to it, a percentage, a count, a naira figure, anything a reader can weigh.",
   "table-layout": "Rebuild that section as plain text lines instead of a table.",
   "unreadable-file": "Re-save this as a real PDF or Word file with selectable text, not an image or a scan.",
 };
@@ -80,30 +70,11 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
         <div className="flex flex-col items-center gap-2 text-center">
           <ScoreRing score={report.score} />
           <p className="font-display text-lg font-medium text-ink-900">{BAND_LABELS[report.band]}</p>
-          <p className="text-sm text-ink-400">{BAND_COPY[report.band]}</p>
           {fileName && <p className="text-xs text-ink-400">{fileName}</p>}
         </div>
 
-        <div className="mt-6 rounded-xl border border-ink-900/10 bg-paper p-4 text-center">
-          <p className="text-sm text-ink-600">
-            Most people don&apos;t find out their CV was the problem until months of silence go
-            by, interview after interview that never even got scheduled.
-          </p>
-          {!showForm && (
-            <button
-              type="button"
-              onClick={openForm}
-              data-testid="secondary-cta"
-              className="mt-3 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
-            >
-              Get a Professionally Written CV
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
         {report.hardGateFailures.length > 0 && (
-          <div className="mt-8">
+          <div className="mt-8" data-testid="hard-gate-failures">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-red-700">
               <AlertTriangle className="h-4 w-4" />
               Critical failures
@@ -173,6 +144,26 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
         </div>
 
         <ScoreCard score={report.score} topFindingLabel={topFindingLabel} />
+
+        <div className="mt-8 border-t border-ink-900/10 pt-6 text-center">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Note</p>
+          <p className="mx-auto mt-2 max-w-md text-sm text-ink-600">
+            Every time you send out a weak CV, that&apos;s an opportunity you hand to another
+            candidate, one you were probably better than, except they had the better CV. You
+            don&apos;t have to keep losing job opportunities that could have changed your life.
+          </p>
+          {!showForm && (
+            <button
+              type="button"
+              onClick={openForm}
+              data-testid="secondary-cta"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+            >
+              Get a Professionally Written CV
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -223,12 +214,19 @@ function CategoryRow({ category }: { category: CategoryReport }) {
             </ul>
           </div>
           <div className="rounded-lg bg-gold-50 p-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-600">What to do</p>
-            <ul className="mt-1.5 space-y-1 text-sm text-ink-900">
-              {category.whatToDo.map((line) => (
-                <li key={line}>{line}</li>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-600">
+              What to do
+            </p>
+            <ol className="space-y-2.5">
+              {category.whatToDo.map((line, i) => (
+                <li key={line} className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink-900 text-[11px] font-bold text-white">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm leading-relaxed text-ink-900">{line}</p>
+                </li>
               ))}
-            </ul>
+            </ol>
           </div>
         </div>
       )}
