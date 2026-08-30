@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.claude
+.qodo
+.env*.local
+npm-debug.log*
+test-results
+playwright-report
+blob-report
+*.tsbuildinfo
+next-env.d.ts
