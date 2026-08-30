@@ -9,18 +9,30 @@ type Props = {
 
 export default function Hero(props: Props) {
   return (
-    <section id="top" className="mx-auto max-w-3xl px-5 pb-14 pt-16 text-center sm:pt-24">
-      <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-gold-600">
+    <section
+      id="top"
+      className="relative mx-auto max-w-3xl overflow-hidden px-5 pb-14 pt-16 text-center sm:pt-24"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[640px] -translate-x-1/2 -translate-y-1/4 rounded-full bg-[radial-gradient(closest-side,#F4CB19,transparent)] opacity-50 blur-3xl"
+      />
+
+      <span className="animate-fade-in inline-flex items-center gap-1.5 rounded-full border border-gold-600/30 bg-gold/15 px-4 py-1.5 text-sm font-semibold text-ink-900">
         Free CV audit
-      </p>
-      <h1 className="font-display text-4xl font-medium leading-tight text-ink-900 sm:text-5xl">
-        Is your CV holding you back from your dream career?
+      </span>
+
+      <h1 className="animate-fade-in [animation-delay:100ms] font-display mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-ink-900 opacity-0 sm:text-5xl md:text-6xl">
+        Most CVs get rejected before a human ever reads them.
       </h1>
-      <p className="mx-auto mt-5 max-w-xl text-lg text-ink-400">
-        Upload it and we&apos;ll check it against the same 15 point standard we use to
-        write CVs professionally, no signup, nothing saved anywhere.
+
+      <p className="animate-fade-in [animation-delay:200ms] mx-auto mt-5 max-w-xl text-lg text-ink-400 opacity-0">
+        Upload it and we&apos;ll run the same 15-point industry standard we use to write
+        CVs for paying clients. No signup required, and your CV is never saved, because
+        we respect your privacy.
       </p>
-      <div className="mt-8">
+
+      <div className="animate-fade-up [animation-delay:300ms] mt-8 opacity-0">
         <Uploader {...props} />
       </div>
     </section>

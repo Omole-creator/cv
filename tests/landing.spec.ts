@@ -40,7 +40,7 @@ test("a photo upload is flagged as unreadable by ATS, without crashing", async (
   await expect(page.getByTestId("report")).toContainText(/photo|scanned|image|text/i);
 });
 
-test("price only ever appears inside the WhatsApp link, never in visible text", async ({ page }) => {
+test("price stays hidden until the form is filled in, never before", async ({ page }) => {
   await page.goto("/");
   await uploadFile(page, "quantified.pdf");
   await expect(page.getByTestId("report")).toBeVisible({ timeout: 15_000 });
@@ -49,6 +49,12 @@ test("price only ever appears inside the WhatsApp link, never in visible text", 
   await page.getByTestId("primary-cta").click();
   await expect(page.getByTestId("request-form")).toBeVisible();
   await expect(page.locator("body")).not.toContainText("₦");
+
+  // Once they've picked a band and a service, showing the price live is
+  // expected, standard checkout-style UX behind a deliberate click.
+  await page.getByTestId("band-senior").check();
+  await page.getByTestId("service-cv").check();
+  await expect(page.getByTestId("form-quote")).toContainText("₦15,000");
 });
 
 test("the request form sends a spaced, priced WhatsApp message and rotates numbers", async ({

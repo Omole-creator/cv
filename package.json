@@ -17,6 +17,7 @@
     "react-dropzone": "20.1.1",
     "pdfjs-dist": "6.3.289",
     "mammoth": "1.12.2",
+    "geist": "1.7.2",
     "html-to-image": "1.11.13",
     "lucide-react": "0.544.0"
   },

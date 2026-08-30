@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { ExperienceBand, ServiceKey } from "@/lib/pricing";
+import { ExperienceBand, priceLines, ServiceKey, totalPrice } from "@/lib/pricing";
 import { buildRequestMessage, generateWhatsAppLink, pickRotatingNumber } from "@/lib/whatsapp";
 
 export default function RequestForm() {
@@ -17,6 +17,8 @@ export default function RequestForm() {
   };
 
   const isValid = name.trim().length > 0 && band !== "" && services.length > 0;
+  const quoteLines = band !== "" && services.length > 0 ? priceLines(band, services) : [];
+  const quoteTotal = band !== "" && services.length > 0 ? totalPrice(band, services) : 0;
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -110,6 +112,22 @@ export default function RequestForm() {
         </div>
       </div>
 
+      {quoteLines.length > 0 && (
+        <div data-testid="form-quote" className="rounded-lg border border-gold-600/30 bg-gold-50 p-3.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-600">Your price</p>
+          <ul className="mt-1.5 space-y-1 text-sm text-ink-900">
+            {quoteLines.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+          {quoteLines.length > 1 && (
+            <p className="mt-1.5 border-t border-gold-600/20 pt-1.5 text-sm font-semibold text-ink-900">
+              Total: ₦{quoteTotal.toLocaleString("en-NG")}
+            </p>
+          )}
+        </div>
+      )}
+
       {touched && !isValid && (
         <p className="text-sm text-red-600">Fill in your name and pick both options above.</p>
       )}
@@ -119,7 +137,7 @@ export default function RequestForm() {
         data-testid="form-submit"
         className="w-full rounded-full bg-ink-900 px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
       >
-        Send my details on WhatsApp
+        Submit to JobMingle Admin on WhatsApp
       </button>
     </form>
   );

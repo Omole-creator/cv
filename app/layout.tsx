@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { Manrope } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-
-const display = Fraunces({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-display",
-  display: "swap",
-});
 
 const sans = Manrope({
   subsets: ["latin"],
@@ -17,7 +11,7 @@ const sans = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "JobMingle Career Growth — Free CV Audit",
+  title: "Free CV Audit | JobMingle",
   description:
     "Upload your CV and see exactly what's likely stopping it from getting past ATS software, in under a minute.",
 };
@@ -28,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" className={`${GeistSans.variable} ${sans.variable}`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

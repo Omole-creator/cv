@@ -5,8 +5,6 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
 import Report from "@/components/Report";
-import AboutSection from "@/components/AboutSection";
-import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import { extractDocument } from "@/lib/extractText";
 import { analyzeCv, CvReport } from "@/lib/analyzeCv";
@@ -61,8 +59,6 @@ export default function Home() {
       />
       {report && <Report report={report} fileName={fileName} />}
       <HowItWorks />
-      <AboutSection />
-      <Faq />
       <Footer />
     </main>
   );

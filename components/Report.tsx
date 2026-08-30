@@ -1,16 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, ArrowRight } from "lucide-react";
-import { CvReport } from "@/lib/analyzeCv";
+import { AlertTriangle, ArrowRight, ChevronDown } from "lucide-react";
+import { BAND_LABELS, CategoryReport, CvReport } from "@/lib/analyzeCv";
 import ScoreCard from "./ScoreCard";
 import RequestForm from "./RequestForm";
 
 const BAND_COPY: Record<CvReport["band"], string> = {
-  excellent: "Solid shape. A few small things are worth tightening.",
+  excellent: "Close to interview-ready. Minor polish only.",
+  "very-strong": "A few targeted fixes and this is in great shape.",
   strong: "Good bones, but a couple of sections need real work.",
-  weak: "There's a lot here worth fixing before this goes out again.",
-  fails: "This is very likely getting filtered out before a person opens it.",
+  "needs-work": "Several sections below are worth fixing before this goes out again.",
+  weak: "Multiple core sections need a real rewrite, not just polish.",
+  critical: "This is very likely getting filtered out before a person opens it.",
+};
+
+const VERDICT_STYLES: Record<CategoryReport["verdict"], string> = {
+  strong: "bg-gold-50 text-ink-900",
+  "needs-work": "bg-ink-50 text-ink-600",
+  weak: "bg-red-50 text-red-700",
+  "info-only": "bg-ink-50 text-ink-400",
+};
+
+const VERDICT_LABELS: Record<CategoryReport["verdict"], string> = {
+  strong: "Solid",
+  "needs-work": "Needs work",
+  weak: "Weak",
+  "info-only": "Self-check",
 };
 
 const KEYWORD_GUIDE: { sector: string; phrases: string[] }[] = [
@@ -19,29 +35,24 @@ const KEYWORD_GUIDE: { sector: string; phrases: string[] }[] = [
   { sector: "Customer service", phrases: ["Client Retention", "SLA Management", "Escalation Handling"] },
 ];
 
-function atsNarrative(report: CvReport): string {
-  const lead =
-    report.hardGateFailures[0]?.detail ??
-    report.findings.find((f) => f.id === "quantified-achievements")?.detail ??
-    report.findings[0]?.detail;
-
-  const manualFix =
-    "Fixing the keyword side yourself means pulling 5 to 7 current job ads in your exact field, reading them closely for the phrases that keep repeating, the technical terms and the softer skill language both, then going back through your summary and experience section rewriting them in by hand without it turning into an obvious keyword dump. It's not complicated work, just slow, and easy to slightly overdo or underdo. Most people doing it properly lose a full weekend to it.";
-
-  return lead ? `${lead} ${manualFix}` : manualFix;
-}
+const MANUAL_FIX_NARRATIVE =
+  "Fixing all of this yourself usually means pulling 5 to 7 current job ads in your exact field, reading them closely for the phrases that keep repeating, then going back through every section above rewriting it by hand without turning it into an obvious keyword dump. None of it is complicated on its own. It's just slow, and easy to slightly overdo or underdo. Most people doing it properly lose a full weekend to it.";
 
 export default function Report({ report, fileName }: { report: CvReport; fileName?: string }) {
   const [showForm, setShowForm] = useState(false);
-  const allFindings = [...report.hardGateFailures, ...report.findings];
-  const topFinding = allFindings[0];
+
+  const weakestCategory = [...report.categories]
+    .filter((c) => c.verdict !== "info-only")
+    .sort((a, b) => a.pointsEarned / a.maxPoints - b.pointsEarned / b.maxPoints)[0];
+  const topFindingLabel = report.hardGateFailures[0]?.label ?? weakestCategory?.label;
 
   return (
     <section id="report" data-testid="report" className="mx-auto max-w-2xl px-5 pb-20">
       <div className="rounded-3xl border border-ink-900/10 bg-white p-6 shadow-card sm:p-9">
         <div className="flex flex-col items-center gap-2 text-center">
           <ScoreRing score={report.score} />
-          <p className="font-medium text-ink-900">{BAND_COPY[report.band]}</p>
+          <p className="font-display text-lg font-medium text-ink-900">{BAND_LABELS[report.band]}</p>
+          <p className="text-sm text-ink-400">{BAND_COPY[report.band]}</p>
           {fileName && <p className="text-xs text-ink-400">{fileName}</p>}
         </div>
 
@@ -62,33 +73,27 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
           </div>
         )}
 
-        {report.findings.length > 0 && (
+        {report.categories.length > 0 && (
           <div className="mt-8">
             <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-600">
-              What we noticed
+              Section by section
             </h3>
-            <ul className="space-y-3">
-              {report.findings.map((f) => (
-                <li key={f.id} className="rounded-xl border border-ink-900/10 p-4">
-                  <p className="font-medium text-ink-900">{f.label}</p>
-                  <p className="mt-1 text-sm text-ink-400">{f.detail}</p>
-                  {f.example && (
-                    <p className="mt-2 rounded-md bg-ink-50 px-2.5 py-1.5 text-xs text-ink-600">
-                      &quot;{f.example}&quot;
-                    </p>
-                  )}
-                </li>
+            <div className="divide-y divide-ink-900/10 rounded-xl border border-ink-900/10">
+              {report.categories.map((category) => (
+                <CategoryRow key={category.id} category={category} />
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
-        <div className="mt-8 rounded-xl bg-ink-900 p-5 text-white">
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gold">
-            The ATS keyword problem
-          </h3>
-          <p className="text-sm leading-relaxed text-white/85">{atsNarrative(report)}</p>
-        </div>
+        {report.categories.length > 0 && (
+          <div className="mt-8 rounded-xl bg-ink-900 p-5 text-white">
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gold">
+              What fixing this yourself actually looks like
+            </h3>
+            <p className="text-sm leading-relaxed text-white/85">{MANUAL_FIX_NARRATIVE}</p>
+          </div>
+        )}
 
         <div className="mt-8">
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-600">
@@ -116,7 +121,7 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
               data-testid="primary-cta"
               className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
             >
-              Get a Professionally Written CV (Skip the Manual Work)
+              Get a Professionally Written CV
               <ArrowRight className="h-4 w-4" />
             </button>
           ) : (
@@ -124,9 +129,67 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
           )}
         </div>
 
-        <ScoreCard score={report.score} topFindingLabel={topFinding?.label} />
+        <ScoreCard score={report.score} topFindingLabel={topFindingLabel} />
       </div>
     </section>
+  );
+}
+
+function CategoryRow({ category }: { category: CategoryReport }) {
+  const [open, setOpen] = useState(false);
+  const pct = Math.round((category.pointsEarned / category.maxPoints) * 100);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
+      >
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <p className="truncate font-medium text-ink-900">{category.label}</p>
+            <span className="shrink-0 text-xs font-semibold text-ink-400">
+              {category.pointsEarned}/{category.maxPoints}
+            </span>
+          </div>
+          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-ink-900/10">
+            <div className="h-full rounded-full bg-gold" style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${VERDICT_STYLES[category.verdict]}`}
+        >
+          {VERDICT_LABELS[category.verdict]}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-ink-400 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="space-y-3 px-4 pb-4">
+          <p className="text-sm text-ink-600">{category.summary}</p>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">What we found</p>
+            <ul className="mt-1.5 space-y-1 text-sm text-ink-600">
+              {category.findings.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-lg bg-gold-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-600">What to do</p>
+            <ul className="mt-1.5 space-y-1 text-sm text-ink-900">
+              {category.whatToDo.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

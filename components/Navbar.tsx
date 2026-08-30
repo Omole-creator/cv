@@ -2,7 +2,6 @@ import Image from "next/image";
 
 const LINKS = [
   { href: "#how-it-works", label: "How it Works" },
-  { href: "#about", label: "About JobMingle" },
   { href: "#contact", label: "Contact" },
 ];
 

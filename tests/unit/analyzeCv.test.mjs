@@ -6,9 +6,9 @@ function doc(text, overrides = {}) {
   return { text, hasTable: false, isUnreadable: false, fileType: "docx", ...overrides };
 }
 
-test("unreadable file (image) always fails with a clear finding", () => {
+test("unreadable file (image) always scores low with a clear finding", () => {
   const report = analyzeCv({ text: "", hasTable: false, isUnreadable: true, fileType: "image" });
-  assert.equal(report.band, "fails");
+  assert.equal(report.band, "critical");
   assert.equal(report.hardGateFailures[0].id, "unreadable-file");
 });
 
@@ -41,9 +41,17 @@ test("a clean, quantified CV scores well with no hard gates", () => {
   assert.ok(report.score >= 60, `expected score >= 60, got ${report.score}`);
 });
 
-test("weak bullet openers are flagged", () => {
+test("weak bullet openers are flagged in the writing category", () => {
   const report = analyzeCv(
     doc("Contact: a@b.com linkedin.com/in/x\nResponsible for scheduling and 3 other duties.")
   );
-  assert.ok(report.findings.some((f) => f.id === "weak-openers"));
+  const writing = report.categories.find((c) => c.id === "writing");
+  assert.ok(writing.findings.some((line) => /weak verb/i.test(line)));
+});
+
+test("every category adds up to the overall score, capped at 59 on a hard gate", () => {
+  const report = analyzeCv(doc("Handled operations — mostly logistics. 5 years experience."));
+  const rawTotal = report.categories.reduce((sum, c) => sum + c.pointsEarned, 0);
+  assert.ok(rawTotal >= report.score);
+  assert.ok(report.score <= 59);
 });

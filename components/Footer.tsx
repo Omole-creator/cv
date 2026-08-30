@@ -7,10 +7,6 @@ export default function Footer() {
         <p className="font-display text-lg font-medium text-ink-900">
           Have a question first?
         </p>
-        <p className="max-w-md text-sm text-ink-400">
-          Message us directly, no form, no waiting on a reply to an email that never
-          comes.
-        </p>
         <WhatsAppButton />
         <p className="mt-6 text-xs text-ink-400">
           © {new Date().getFullYear()} JobMingle. Career Growth Audit.
