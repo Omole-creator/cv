@@ -146,7 +146,7 @@ export default function Report({ report, fileName }: { report: CvReport; fileNam
         <ScoreCard score={report.score} topFindingLabel={topFindingLabel} />
 
         <div className="mt-8 border-t border-ink-900/10 pt-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Note</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Remember</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-ink-600">
             Every time you send out a weak CV, that&apos;s an opportunity you hand to another
             candidate, one you were probably better than, except they had the better CV. You
@@ -206,12 +206,19 @@ function CategoryRow({ category }: { category: CategoryReport }) {
         <div className="space-y-3 px-4 pb-4">
           <p className="text-sm text-ink-600">{category.summary}</p>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">What we found</p>
-            <ul className="mt-1.5 space-y-1 text-sm text-ink-600">
-              {category.findings.map((line) => (
-                <li key={line}>{line}</li>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400">
+              What we found
+            </p>
+            <ol className="space-y-2.5">
+              {category.findings.map((line, i) => (
+                <li key={line} className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink-900 text-[11px] font-bold text-white">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm leading-relaxed text-ink-600">{line}</p>
+                </li>
               ))}
-            </ul>
+            </ol>
           </div>
           <div className="rounded-lg bg-gold-50 p-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-600">
