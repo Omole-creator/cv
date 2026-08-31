@@ -86,9 +86,62 @@ const STIFF_PHRASES = [
 const BULLET_PREFIX = /^[\s]*[•\-*●▪◦]\s+/;
 const YEAR_PATTERN = /\b(19|20)\d{2}\b/;
 const DATE_RANGE_PATTERN = /\b(19|20)\d{2}\s*(-|–|to)\s*((19|20)\d{2}|present)\b/i;
-const HEADER_PATTERN =
-  /^(professional summary|summary|work experience|experience|core skills|skills|education|certifications?|training|projects)$/i;
 const TITLE_CASE_PHRASE = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})\b/g;
+
+// Section headings vary a lot across real CVs (e.g. "SKILL", "SKILLS AND
+// COMPETENCIES", "CORE COMPETENCIES", "Professional Experience"). Each
+// section type gets a list of accepted synonyms instead of one hardcoded
+// regex, so detection doesn't depend on one specific heading wording.
+function headingRegex(patterns: string[]): RegExp {
+  return new RegExp(`^(?:${patterns.join("|")})\\s*:?\\s*$`, "i");
+}
+
+const SUMMARY_HEADINGS = ["summary", "professional summary", "career summary", "profile"];
+const EXPERIENCE_HEADINGS = [
+  "experience",
+  "work experience",
+  "professional experience",
+  "business experience",
+  "relevant experience",
+  "employment history",
+  "work history",
+  "career history",
+  "professional background",
+];
+const SKILLS_HEADINGS = [
+  "skills?",
+  "core skills?",
+  "key skills?",
+  "technical skills?",
+  "relevant skills?",
+  "professional skills?",
+  "competenc\\w*",
+  "core competenc\\w*",
+  "key competenc\\w*",
+  "skills?\\s*(?:&|and)\\s*competenc\\w*",
+  "core skills?\\s*(?:&|and)\\s*competenc\\w*",
+  "competenc\\w*\\s*(?:&|and)\\s*skills?",
+  "areas? of expertise",
+  "technical proficienc\\w*",
+  "key strengths",
+];
+const EDUCATION_HEADINGS = ["education", "academic background", "educational background"];
+const CERTIFICATION_HEADINGS = ["certifications?", "licenses? and certifications?"];
+const TRAINING_HEADINGS = ["training"];
+const PROJECTS_HEADINGS = ["projects"];
+
+const SUMMARY_HEADER = headingRegex(SUMMARY_HEADINGS);
+const EXPERIENCE_HEADER = headingRegex(EXPERIENCE_HEADINGS);
+const SKILLS_HEADER = headingRegex(SKILLS_HEADINGS);
+const HEADER_PATTERN = headingRegex([
+  ...SUMMARY_HEADINGS,
+  ...EXPERIENCE_HEADINGS,
+  ...SKILLS_HEADINGS,
+  ...EDUCATION_HEADINGS,
+  ...CERTIFICATION_HEADINGS,
+  ...TRAINING_HEADINGS,
+  ...PROJECTS_HEADINGS,
+]);
 
 function splitLines(text: string): string[] {
   return text
@@ -136,7 +189,7 @@ function verdictFor(pointsEarned: number, maxPoints: number): CategoryVerdict {
 // be failed against. It's still scored (as a deduction) inside categoryWriting.
 
 function checkNoDigitsInExperience(lines: string[]): Finding | null {
-  const block = findSection(lines, /^(work )?experience$/i);
+  const block = findSection(lines, EXPERIENCE_HEADER);
   // Numbers are only required in Work Experience. If we can't even find that
   // section, there's nothing fair to check here.
   if (block.length === 0) return null;
@@ -175,7 +228,7 @@ function unreadableFinding(fileType: ExtractedDocument["fileType"]): Finding {
 // --- Categories (careercv.md's 8 scored sections, weights preserved: 30/10/10/8/15/10/10/7 = 100) ---
 
 function experienceBullets(lines: string[]): string[] {
-  const block = findSection(lines, /^(work )?experience$/i);
+  const block = findSection(lines, EXPERIENCE_HEADER);
   const scope = block.length > 0 ? block : lines;
   return scope.filter(looksLikeBullet);
 }
@@ -227,7 +280,7 @@ function categoryQuantified(lines: string[], ratio: number): CategoryReport {
 }
 
 function categorySummary(lines: string[]): CategoryReport {
-  const block = findSection(lines, /^(professional )?summary$/i);
+  const block = findSection(lines, SUMMARY_HEADER);
   if (block.length === 0) {
     return {
       id: "summary",
@@ -345,7 +398,7 @@ function categoryExperience(lines: string[]): CategoryReport {
 }
 
 function categorySkills(lines: string[]): CategoryReport {
-  const block = findSection(lines, /^(core )?skills$/i);
+  const block = findSection(lines, SKILLS_HEADER);
   if (block.length === 0) {
     return {
       id: "skills",
@@ -479,7 +532,7 @@ function categoryWriting(text: string, lines: string[]): CategoryReport {
   };
 }
 
-function categoryFormatting(text: string, hasTable: boolean): CategoryReport {
+function categoryFormatting(text: string, lines: string[], hasTable: boolean): CategoryReport {
   let points = 10;
   const findings: string[] = [];
 
@@ -497,7 +550,11 @@ function categoryFormatting(text: string, hasTable: boolean): CategoryReport {
     points -= 1;
     findings.push("No LinkedIn URL found.");
   }
-  const sectionsFound = [/experience/i, /skills/i, /education/i].filter((re) => re.test(text)).length;
+  const sectionsFound = [
+    lines.some((l) => EXPERIENCE_HEADER.test(l.trim())),
+    lines.some((l) => SKILLS_HEADER.test(l.trim())),
+    /education|academic/i.test(text),
+  ].filter(Boolean).length;
   if (sectionsFound < 3) {
     points -= 3 - sectionsFound;
     findings.push("Missing one of the standard sections: Experience, Skills, or Education.");
@@ -575,7 +632,7 @@ export function analyzeCv(doc: ExtractedDocument): CvReport {
     categorySkills(lines),
     categoryKeywords(lines),
     categoryWriting(text, lines),
-    categoryFormatting(text, doc.hasTable),
+    categoryFormatting(text, lines, doc.hasTable),
     categoryTruthfulness(),
   ];
 

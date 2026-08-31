@@ -80,6 +80,18 @@ node tests/fixtures/generate-pdf.mjs   # quantified.pdf (hand-built PDF with a r
   is the single source of truth for score-band cutoffs; `bandFor()` and the "What your score
   means" legend in `components/HowItWorks.tsx` both read it, so don't hardcode the numeric
   cutoffs (90/80/70/60/40) anywhere else, they'd drift.
+  Section detection (`findSection`) matches headings against per-section-type synonym lists
+  (`EXPERIENCE_HEADINGS`, `SKILLS_HEADINGS`, etc., combined into `HEADER_PATTERN` for section
+  boundaries), not one hardcoded regex per section — real CVs head their skills section `SKILL`,
+  `SKILLS AND COMPETENCIES`, `CORE COMPETENCIES`, `AREAS OF EXPERTISE`, and their experience
+  section `Professional Experience`, `Business Experience`, `Employment History`, and a single
+  literal pattern misses most of those. Add new phrasings to the relevant list rather than
+  reaching for a one-off regex at the call site. The Work Experience heading match is also what
+  scopes quantified-achievement checking (`experienceBullets`, `checkNoDigitsInExperience`) to
+  that section only — get it wrong and the fallback (`scope = block.length > 0 ? block : lines`,
+  which exists only for CVs with no section headings at all) silently widens the scan to the
+  whole document, penalizing missing numbers in Education/Skills/Summary, which the rubric never
+  requires.
 - `pricing.ts` — the only place the actual naira figures live. Never imported by anything that
   renders text to the page.
 - `whatsapp.ts` — builds the WhatsApp deep link and the two message templates (priced request vs.
