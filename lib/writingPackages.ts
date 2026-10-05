@@ -9,7 +9,6 @@ export type WritingPackage = {
   key: PackageKey;
   name: string;
   system: string;
-  oldPrice: number;
   price: number;
   delivery: string;
   popular?: boolean;
@@ -31,7 +30,6 @@ export const PACKAGES: WritingPackage[] = [
     key: "basic",
     name: "Basic",
     system: "The Get-Replies System",
-    oldPrice: 35000,
     price: 20000,
     delivery: "24 to 48 hours",
     work: [
@@ -49,7 +47,6 @@ export const PACKAGES: WritingPackage[] = [
     key: "standard",
     name: "Standard",
     system: "The Get-Found System",
-    oldPrice: 80000,
     price: 50000,
     delivery: "4 to 6 days",
     popular: true,
@@ -68,8 +65,7 @@ export const PACKAGES: WritingPackage[] = [
     key: "premium",
     name: "Premium",
     system: "The Get-Hired System",
-    oldPrice: 150000,
-    price: 100000,
+    price: 70000,
     delivery: "7 to 10 days",
     work: [
       "Everything in Standard",
@@ -142,4 +138,10 @@ export function totalBonusValue(key: PackageKey): number {
   return PACKAGES.slice(0, upTo + 1)
     .flatMap((p) => p.bonuses)
     .reduce((sum, b) => sum + b.value, 0);
+}
+
+// What the card shows struck through: the price plus everything in the
+// bonus stack, so the real price reads as the discount.
+export function totalValue(pkg: WritingPackage): number {
+  return pkg.price + totalBonusValue(pkg.key);
 }

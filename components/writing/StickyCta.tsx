@@ -27,11 +27,11 @@ export default function StickyCta() {
   if (!heroGone || formVisible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-900/10 bg-paper/95 p-3 backdrop-blur sm:hidden">
+    <div className="fixed inset-x-3 bottom-3 z-40 sm:hidden">
       <button
         type="button"
         onClick={scrollToApply}
-        className="w-full rounded-full bg-gold px-5 py-3 text-sm font-semibold text-ink-900"
+        className="w-full rounded-full bg-gold px-5 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_10px_30px_-6px_rgba(6,13,41,0.45)]"
       >
         Yes, I want more interview invites
       </button>

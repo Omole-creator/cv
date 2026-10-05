@@ -142,7 +142,13 @@ payment: there are no checkout links, and package buttons only preselect the pac
 at the bottom (`PackageContext`) before it opens WhatsApp on the single number in
 `lib/writingPackages.ts` (not the rotating pair). Unlike `/`, this page shows naira prices on
 purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
-`public/writing/` are cropped to remove phone numbers; keep it that way for new ones.
+`public/writing/` hide phone numbers (cropped out, or last 4 digits blurred); keep it that way for
+new ones. Each pricing card strikes through `totalValue()` (price + every bonus value, including
+lower tiers) to reveal the real price. Bonus values in `writingPackages.ts` are placeholders.
+Motion on `/writing` (scroll reveals, the gold highlighter sweep, hero chat) is CSS in
+`globals.css` under `.w-*` / `html.fx`, driven by one observer in `components/writing/ScrollFx.tsx`;
+an inline script sets `html.fx` so nothing is hidden if JS fails. Videos play inline via
+`YouTubeLite` and only load the YouTube iframe after a click.
 
 **Page structure:** Navbar → Hero → Report (only once a file's been processed) → How it Works →
 Footer. There is no About or FAQ section, they were cut deliberately as not needed. Don't re-add

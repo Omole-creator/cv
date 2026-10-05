@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import type { PackageChoice } from "@/lib/writingPackages";
 
 type Ctx = {
@@ -47,11 +48,14 @@ export function ChoosePackageButton({
         setChoice(pkg);
         scrollToApply();
       }}
-      className={`w-full rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90 ${
-        featured ? "bg-gold text-ink-900" : "bg-ink-900 text-white"
+      className={`group inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-semibold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${
+        featured
+          ? "w-shine bg-gold text-ink-900 hover:shadow-[0_8px_30px_-6px_rgba(244,203,25,0.6)]"
+          : "bg-white/10 text-white ring-1 ring-white/15 hover:bg-white/15"
       }`}
     >
       {label}
+      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
     </button>
   );
 }
@@ -61,9 +65,10 @@ export function ApplyButton({ label, className = "" }: { label: string; classNam
     <button
       type="button"
       onClick={scrollToApply}
-      className={`inline-flex items-center justify-center rounded-full bg-gold px-7 py-3.5 text-base font-semibold text-ink-900 shadow-card transition-opacity hover:opacity-90 ${className}`}
+      className={`w-shine group inline-flex items-center justify-center gap-2.5 rounded-full bg-gold px-7 py-4 text-base font-semibold text-ink-900 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-8px_rgba(244,203,25,0.65)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${className}`}
     >
       {label}
+      <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
     </button>
   );
 }
