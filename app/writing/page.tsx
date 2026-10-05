@@ -380,12 +380,12 @@ export default function WritingPage() {
               "Victoria Harry found this out when she saw the CV we wrote for her. Read what she sent us.",
             ]}
           />
-          <figure className="mx-auto my-8 max-w-md">
+          <figure className="mx-auto my-8 max-w-sm">
             <Image
               src="/writing/client-underselling.jpg"
               alt="Victoria Harry's WhatsApp message saying the new CV showed she had been underselling herself, and that she is now getting callbacks and has an interview with a hospital in Lagos"
               width={700}
-              height={577}
+              height={1102}
               className="w-full rounded-2xl border border-ink-900/10"
             />
             <figcaption className="mt-3 text-center text-sm text-ink-400">
