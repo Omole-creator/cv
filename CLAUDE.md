@@ -136,6 +136,14 @@ spots. `data-testid="hard-gate-failures"` scopes assertions to just the Critical
 useful since a hard-gate-triggering finding may also get echoed into the always-visible fix-steps
 list further down the same page.
 
+**`/writing` is a separate long-form sales page** (`app/writing/page.tsx`, client pieces in
+`components/writing/`), rebuilt from jobmingle.co/careerservice. Its goal is a form fill, not a
+payment: there are no checkout links, and package buttons only preselect the package in the form
+at the bottom (`PackageContext`) before it opens WhatsApp on the single number in
+`lib/writingPackages.ts` (not the rotating pair). Unlike `/`, this page shows naira prices on
+purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
+`public/writing/` are cropped to remove phone numbers; keep it that way for new ones.
+
 **Page structure:** Navbar → Hero → Report (only once a file's been processed) → How it Works →
 Footer. There is no About or FAQ section, they were cut deliberately as not needed. Don't re-add
 them without being asked.
