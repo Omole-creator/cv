@@ -15,9 +15,9 @@ import {
 import { usePackage } from "./PackageContext";
 
 const fieldLabel = "mb-2 block font-display text-[15px] font-semibold tracking-[-0.02em] text-ink-900";
-const optionBase = "flex cursor-pointer items-center rounded-xl border px-3.5 py-3 text-sm transition-all duration-200 hover:border-ink-900/30";
-const optionOn = "border-gold-600 bg-gold-50 shadow-[0_0_0_3px_rgba(244,203,25,0.25)]";
-const optionOff = "border-ink-900/15 bg-white";
+const optionBase = "flex cursor-pointer items-center rounded-xl border px-3.5 py-3 text-sm text-ink-900 transition-all duration-200 hover:border-ink-900/50";
+const optionOn = "border-ink-900 bg-white font-semibold shadow-[0_0_0_3px_rgba(6,13,41,0.18)]";
+const optionOff = "border-ink-900/20 bg-white/60";
 
 function Select({
   id,
@@ -37,7 +37,7 @@ function Select({
         data-testid={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full appearance-none rounded-xl border border-ink-900/15 bg-white py-3 pl-4 pr-11 outline-none transition-shadow focus:border-gold-600 focus:shadow-[0_0_0_3px_rgba(244,203,25,0.25)] ${
+        className={`w-full appearance-none rounded-xl border border-ink-900/20 bg-white py-3 pl-4 pr-11 outline-none transition-shadow focus:border-ink-900 focus:shadow-[0_0_0_3px_rgba(6,13,41,0.18)] ${
           value ? "text-ink-900" : "text-ink-600"
         }`}
       >
@@ -86,7 +86,7 @@ export default function WritingForm() {
     <form
       onSubmit={handleSubmit}
       data-testid="writing-form"
-      className="space-y-6 rounded-[2rem] bg-white p-6 text-left shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)] ring-1 ring-white/10 sm:p-9"
+      className="space-y-6 rounded-[2rem] bg-gold p-6 text-left shadow-[0_40px_120px_-30px_rgba(244,203,25,0.45)] ring-1 ring-gold-400 sm:p-9"
     >
       <div>
         <label htmlFor="w-name" className={fieldLabel}>
@@ -99,7 +99,7 @@ export default function WritingForm() {
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Amaka Obi"
           autoComplete="name"
-          className="w-full rounded-xl border border-ink-900/15 px-4 py-3 text-ink-900 outline-none transition-shadow focus:border-gold-600 focus:shadow-[0_0_0_3px_rgba(244,203,25,0.25)]"
+          className="w-full rounded-xl border border-ink-900/20 bg-white px-4 py-3 placeholder:text-ink-600/70 text-ink-900 outline-none transition-shadow focus:border-ink-900 focus:shadow-[0_0_0_3px_rgba(6,13,41,0.18)]"
         />
       </div>
 
@@ -113,7 +113,7 @@ export default function WritingForm() {
           value={role}
           onChange={(e) => setRole(e.target.value)}
           placeholder="e.g. Customer service, data analyst, admin officer"
-          className="w-full rounded-xl border border-ink-900/15 px-4 py-3 text-ink-900 outline-none transition-shadow focus:border-gold-600 focus:shadow-[0_0_0_3px_rgba(244,203,25,0.25)]"
+          className="w-full rounded-xl border border-ink-900/20 bg-white px-4 py-3 placeholder:text-ink-600/70 text-ink-900 outline-none transition-shadow focus:border-ink-900 focus:shadow-[0_0_0_3px_rgba(6,13,41,0.18)]"
         />
       </div>
 
@@ -127,7 +127,7 @@ export default function WritingForm() {
                 name="location"
                 checked={location === option}
                 onChange={() => setLocation(option)}
-                className="mr-2"
+                className="mr-2 accent-ink-900"
               />
               {option}
             </label>
@@ -162,7 +162,7 @@ export default function WritingForm() {
       </div>
 
       {touched && !isValid && (
-        <p className="text-sm text-red-600">Please answer all five questions so our team knows how to help.</p>
+        <p className="rounded-lg bg-white/70 px-3 py-2 text-sm font-semibold text-red-700">Please answer all five questions so our team knows how to help.</p>
       )}
 
       <div>
@@ -173,7 +173,7 @@ export default function WritingForm() {
         >
           Send my answers on WhatsApp
         </button>
-        <p className="mt-2.5 text-center text-xs text-ink-400">
+        <p className="mt-3 text-center text-xs font-medium text-ink-900/80">
           This opens WhatsApp with your answers already typed in. Nothing gets charged.
         </p>
       </div>
