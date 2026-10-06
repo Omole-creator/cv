@@ -12,9 +12,9 @@ export type WritingPackage = {
   price: number;
   delivery: string;
   popular?: boolean;
-  // Overrides the struck-through figure when it shouldn't be the
-  // computed price + bonuses total.
-  crossedOut?: number;
+  // false: the card's bonus total and struck-through value count only
+  // this package's own bonuses, not the ones from cheaper packages.
+  countLowerBonuses?: boolean;
   work: string[];
   bonuses: Bonus[];
 };
@@ -69,17 +69,19 @@ export const PACKAGES: WritingPackage[] = [
     name: "Premium",
     system: "The Get-Hired System",
     price: 80000,
-    crossedOut: 150000,
+    // Priced on its own bonuses only (80k + 70k = 150k). The Basic and
+    // Standard bonuses still come with it, shown as unpriced extras.
+    countLowerBonuses: false,
     delivery: "7 to 10 days",
     work: [
       "Everything in Standard",
       "A portfolio website with a few pages that show employers what you do, how you do it, and who you've done it for",
     ],
     bonuses: [
-      { name: "The \"Hidden Reason You Keep Losing Jobs You Had Already Won\" blueprint", value: 15000 },
-      { name: "The AI mock interview pack: practice interview questions you can run with ChatGPT before the real one", value: 10000 },
-      { name: "Salary negotiation scripts, for naira or dollars", value: 10000 },
-      { name: "The get-paid-in-dollars setup guide", value: 10000 },
+      { name: "The \"Hidden Reason You Keep Losing Jobs You Had Already Won\" blueprint", value: 25000 },
+      { name: "The AI mock interview pack: practice interview questions you can run with ChatGPT before the real one", value: 15000 },
+      { name: "Salary negotiation scripts, for naira or dollars", value: 15000 },
+      { name: "The get-paid-in-dollars setup guide", value: 15000 },
     ],
   },
 ];
@@ -139,7 +141,8 @@ export function buildWritingMessage(lead: WritingLead): string {
 // bonuses from the cheaper packages it includes ("Everything in Basic").
 export function totalBonusValue(key: PackageKey): number {
   const upTo = PACKAGES.findIndex((p) => p.key === key);
-  return PACKAGES.slice(0, upTo + 1)
+  const from = PACKAGES[upTo].countLowerBonuses === false ? upTo : 0;
+  return PACKAGES.slice(from, upTo + 1)
     .flatMap((p) => p.bonuses)
     .reduce((sum, b) => sum + b.value, 0);
 }
@@ -147,5 +150,5 @@ export function totalBonusValue(key: PackageKey): number {
 // What the card shows struck through: the price plus everything in the
 // bonus stack, so the real price reads as the discount.
 export function totalValue(pkg: WritingPackage): number {
-  return pkg.crossedOut ?? pkg.price + totalBonusValue(pkg.key);
+  return pkg.price + totalBonusValue(pkg.key);
 }
