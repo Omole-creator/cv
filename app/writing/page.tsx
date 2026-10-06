@@ -65,7 +65,7 @@ function H2({ children, dark, className = "" }: { children: ReactNode; dark?: bo
   return (
     <h2
       data-reveal
-      className={`mx-auto max-w-3xl text-balance text-center font-helvetica text-[2rem] font-bold leading-[1.1] tracking-[-0.03em] sm:text-5xl ${
+      className={`mx-auto max-w-3xl text-balance text-center font-helvetica text-[2rem] font-semibold leading-[1.08] tracking-[-0.045em] sm:text-5xl ${
         dark ? "text-white" : "text-ink-900"
       } ${className}`}
     >
@@ -379,17 +379,17 @@ export default function WritingPage() {
           />
           <div className="relative mx-auto max-w-5xl px-5 text-center">
             {/* Stacked scale: small lead-in, one huge phrase, medium close. */}
-            <h1 className="font-anton uppercase leading-none text-white">
-              <span className="animate-fade-in block text-2xl tracking-wide text-white/80 opacity-0 [animation-delay:100ms] sm:text-3xl">
+            <h1 className="font-display leading-[1.05] tracking-[-0.05em] text-white">
+              <span className="animate-fade-in block text-2xl font-normal text-white/80 opacity-0 [animation-delay:100ms] sm:text-3xl">
                 Ayomide applied for 5 months and heard nothing.
               </span>
-              <span className="animate-fade-in mt-3 block text-3xl tracking-wide text-white opacity-0 [animation-delay:250ms] sm:text-4xl lg:text-5xl">
+              <span className="animate-fade-in mt-3 block text-3xl font-semibold text-white opacity-0 [animation-delay:250ms] sm:text-4xl lg:text-5xl">
                 Then we changed how her CV sold her, and
               </span>
-              <span className="animate-fade-in mt-2 block text-6xl leading-[0.95] text-gold opacity-0 [animation-delay:400ms] sm:text-[5.5rem] lg:text-[6.75rem]">
+              <span className="animate-fade-in mt-2 block text-[2.9rem] font-semibold leading-[0.95] text-gold opacity-0 [animation-delay:400ms] sm:text-[4.75rem] lg:text-[5.75rem]">
                 5 companies replied
               </span>
-              <span className="animate-fade-in mt-2 block text-3xl tracking-wide text-white/90 opacity-0 [animation-delay:550ms] sm:text-4xl lg:text-5xl">
+              <span className="animate-fade-in mt-2 block text-3xl font-semibold text-white/90 opacity-0 [animation-delay:550ms] sm:text-4xl lg:text-5xl">
                 in less than a week.
               </span>
             </h1>
@@ -754,7 +754,7 @@ export default function WritingPage() {
               <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gold/10 ring-1 ring-gold/40">
                 <ShieldCheck className="h-10 w-10 text-gold" strokeWidth={1.5} />
               </span>
-              <h2 className="mx-auto mt-6 max-w-xl text-balance font-display text-3xl font-semibold leading-[1.1] tracking-[-0.045em] text-white sm:text-[2.6rem]">
+              <h2 className="mx-auto mt-6 max-w-xl text-balance font-helvetica text-3xl font-semibold leading-[1.1] tracking-[-0.045em] text-white sm:text-[2.6rem]">
                 Our 90-day &quot;Get Responses&quot; guarantee
               </h2>
               <Prose
