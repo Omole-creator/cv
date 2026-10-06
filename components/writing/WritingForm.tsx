@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, ReactNode, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { generateWhatsAppLink } from "@/lib/whatsapp";
 import {
   buildWritingMessage,
@@ -17,6 +18,38 @@ const fieldLabel = "mb-2 block font-display text-[15px] font-semibold tracking-[
 const optionBase = "flex cursor-pointer items-center rounded-xl border px-3.5 py-3 text-sm transition-all duration-200 hover:border-ink-900/30";
 const optionOn = "border-gold-600 bg-gold-50 shadow-[0_0_0_3px_rgba(244,203,25,0.25)]";
 const optionOff = "border-ink-900/15 bg-white";
+
+function Select({
+  id,
+  value,
+  onChange,
+  children,
+}: {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="relative">
+      <select
+        id={id}
+        data-testid={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`w-full appearance-none rounded-xl border border-ink-900/15 bg-white py-3 pl-4 pr-11 outline-none transition-shadow focus:border-gold-600 focus:shadow-[0_0_0_3px_rgba(244,203,25,0.25)] ${
+          value ? "text-ink-900" : "text-ink-600"
+        }`}
+      >
+        <option value="" disabled>
+          Choose one
+        </option>
+        {children}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-600" />
+    </div>
+  );
+}
 
 export default function WritingForm() {
   const { choice, setChoice } = usePackage();
@@ -102,45 +135,31 @@ export default function WritingForm() {
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend className={fieldLabel}>How long have you been job hunting?</legend>
-        <div className="grid grid-cols-2 gap-2">
+      <div>
+        <label htmlFor="w-duration" className={fieldLabel}>
+          How long have you been job hunting?
+        </label>
+        <Select id="w-duration" value={duration} onChange={setDuration}>
           {DURATION_OPTIONS.map((option) => (
-            <label key={option} className={`${optionBase} ${duration === option ? optionOn : optionOff}`}>
-              <input
-                type="radio"
-                name="duration"
-                checked={duration === option}
-                onChange={() => setDuration(option)}
-                className="mr-2"
-              />
+            <option key={option} value={option}>
               {option}
-            </label>
+            </option>
           ))}
-        </div>
-      </fieldset>
+        </Select>
+      </div>
 
-      <fieldset>
-        <legend className={fieldLabel}>Which package are you thinking of?</legend>
-        <div className="grid grid-cols-2 gap-2">
+      <div>
+        <label htmlFor="w-package" className={fieldLabel}>
+          Which package are you thinking of?
+        </label>
+        <Select id="w-package" value={choice} onChange={(v) => setChoice(v as PackageChoice)}>
           {packageOptions.map(([value, label]) => (
-            <label
-              key={value}
-              className={`${optionBase} ${choice === value ? optionOn : optionOff}`}
-            >
-              <input
-                type="radio"
-                name="package"
-                checked={choice === value}
-                onChange={() => setChoice(value)}
-                className="mr-2"
-                data-testid={`w-package-${value}`}
-              />
+            <option key={value} value={value}>
               {label}
-            </label>
+            </option>
           ))}
-        </div>
-      </fieldset>
+        </Select>
+      </div>
 
       {touched && !isValid && (
         <p className="text-sm text-red-600">Please answer all five questions so our team knows how to help.</p>

@@ -17,9 +17,14 @@ export default function ScrollFx() {
           }
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.1 }
+      { rootMargin: "0px 0px -6% 0px", threshold: 0 }
     );
-    els.forEach((el) => io.observe(el));
+    els.forEach((el) => {
+      // Anything already above the fold (or scrolled past, e.g. after a
+      // jump to the form) shows at once instead of waiting to fade in.
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-in");
+      else io.observe(el);
+    });
     return () => io.disconnect();
   }, []);
 

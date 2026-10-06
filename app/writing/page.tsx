@@ -39,7 +39,7 @@ function Prose({ lines, className = "", dark }: { lines: string[]; className?: s
   return (
     <div
       className={`mx-auto max-w-[640px] space-y-5 text-[17px] leading-[1.75] sm:text-[18px] ${
-        dark ? "text-white/70" : "text-ink-400"
+        dark ? "text-white/85" : "text-ink-600"
       } ${className}`}
     >
       {lines.map((line) =>
@@ -65,7 +65,7 @@ function H2({ children, dark, className = "" }: { children: ReactNode; dark?: bo
   return (
     <h2
       data-reveal
-      className={`mx-auto max-w-3xl text-balance text-center font-display text-[2rem] font-semibold leading-[1.08] tracking-[-0.045em] sm:text-5xl ${
+      className={`mx-auto max-w-3xl text-balance text-center font-helvetica text-[2rem] font-bold leading-[1.1] tracking-[-0.03em] sm:text-5xl ${
         dark ? "text-white" : "text-ink-900"
       } ${className}`}
     >
@@ -132,7 +132,7 @@ function PhoneShot({
         <Image src={src} alt={alt} width={w} height={h} className="w-full rounded-[1.7rem]" />
       </div>
       {caption && (
-        <figcaption className="mt-5 text-center font-mono text-[12px] uppercase leading-relaxed tracking-wider text-ink-400">
+        <figcaption className="mt-5 text-center font-mono text-[12px] uppercase leading-relaxed tracking-wider text-ink-600">
           {caption}
         </figcaption>
       )}
@@ -166,7 +166,7 @@ function VideoGrid({ videos }: { videos: typeof VIDEOS_TOP }) {
         <div key={v.id} data-reveal style={delay(i * 90)}>
           <YouTubeLite id={v.id} title={`${v.name} talks about working with JobMingle`} />
           <p className="mt-3 font-display font-semibold tracking-[-0.02em] text-ink-900">{v.name}</p>
-          <p className="font-mono text-[12px] uppercase tracking-wider text-ink-400">{v.role}</p>
+          <p className="font-mono text-[12px] uppercase tracking-wider text-ink-600">{v.role}</p>
         </div>
       ))}
     </div>
@@ -199,7 +199,7 @@ function Quotes({ quotes }: { quotes: Quote[] }) {
               <span className="block font-display text-sm font-semibold tracking-[-0.01em] text-ink-900">
                 {q.name}
               </span>
-              <span className="block font-mono text-[11px] uppercase tracking-wider text-ink-400">{q.role}</span>
+              <span className="block font-mono text-[11px] uppercase tracking-wider text-ink-600">{q.role}</span>
             </span>
           </figcaption>
         </figure>
@@ -359,50 +359,6 @@ const LINKEDIN = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Hero chat: Ayomide's real messages, word for word from her chat     */
-/* ------------------------------------------------------------------ */
-
-function HeroChat() {
-  return (
-    <div className="w-float relative mx-auto w-full max-w-[380px]" aria-label="Ayomide's messages to the JobMingle team">
-      <div aria-hidden className="absolute -inset-10 rounded-full bg-gold/20 blur-3xl" />
-      <div className="relative overflow-hidden rounded-[2rem] bg-[#ECE5DD] shadow-[0_50px_100px_-30px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-        <div className="flex items-center gap-3 bg-[#075E54] px-4 py-3 text-white">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 font-display text-sm font-semibold">
-            A
-          </span>
-          <span className="font-display text-[15px] font-semibold tracking-[-0.01em]">Ayomide</span>
-        </div>
-        <div className="space-y-2.5 px-3 py-4 text-[14px] leading-snug text-[#111b21]">
-          <div className="w-typing inline-flex gap-1 rounded-xl rounded-tl-sm bg-white px-3 py-3" style={delay(600)}>
-            <i />
-            <i />
-            <i />
-          </div>
-          <div className="w-msg max-w-[85%] rounded-xl rounded-tl-sm bg-white px-3 py-2 shadow-sm" style={delay(1700)}>
-            Thank you very much for the CV, is not even up to 1week, I have gotten replies from 5 companies
-            <span className="mt-1 block text-right text-[10px] text-black/45">11:23 am</span>
-          </div>
-          <div className="w-msg ml-auto max-w-[80%] rounded-xl rounded-tr-sm bg-[#D9FDD3] px-3 py-2 shadow-sm" style={delay(2500)}>
-            That&apos;s quite a good number 👏👏👏 Congrats. Good news on its way
-            <span className="mt-1 block text-right text-[10px] text-black/45">11:27 am</span>
-          </div>
-          <div className="w-msg max-w-[88%] overflow-hidden rounded-xl rounded-tl-sm bg-white shadow-sm" style={delay(3500)}>
-            <div className="bg-[#1f1f1f] px-3 py-2.5 text-white">
-              <p className="text-[13px] font-semibold">Offer of Employment</p>
-              <p className="mt-1.5 text-[12px] leading-snug text-white/75">
-                Dear Ayomide, We are pleased to offer you the position of Sales Representative at Chrisdron
-                Solutions.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -415,40 +371,51 @@ export default function WritingPage() {
       <SiteNav />
       <main className="overflow-x-clip">
         {/* Hero */}
-        <section id="top" className="relative overflow-hidden bg-ink-900 pb-20 pt-28 sm:pb-24 sm:pt-32">
+        <section id="top" className="relative overflow-hidden bg-ink-900 pb-20 pt-28 sm:pb-28 sm:pt-32">
           <div aria-hidden className="w-grid-bg absolute inset-0" />
           <div
             aria-hidden
-            className="absolute -left-40 top-1/3 h-[500px] w-[500px] rounded-full bg-gold/10 blur-[120px]"
+            className="absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-gold/10 blur-[130px]"
           />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-5 lg:grid-cols-[1.25fr_1fr]">
-            <div>
-              <span className="animate-fade-in inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-white/70">
-                <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_10px_2px_rgba(244,203,25,0.7)]" />
-                For anyone who has sent CV after CV and heard nothing back
+          <div className="relative mx-auto max-w-5xl px-5 text-center">
+            {/* Stacked scale: small lead-in, one huge phrase, medium close. */}
+            <h1 className="font-anton uppercase leading-none text-white">
+              <span className="animate-fade-in block text-2xl tracking-wide text-white/80 opacity-0 [animation-delay:100ms] sm:text-3xl">
+                Ayomide applied for 5 months and heard nothing.
               </span>
-              <h1 className="mt-7 font-display text-[2.35rem] leading-[1.1] tracking-[-0.05em] sm:text-[3.4rem] lg:text-[3.6rem]">
-                <span className="animate-fade-in block font-normal text-white/45 [animation-delay:100ms] opacity-0">
-                  Ayomide applied for 5 months and heard nothing.
-                </span>{" "}
-                <span className="animate-fade-in mt-2 block font-semibold text-white [animation-delay:350ms] opacity-0">
-                  Then we changed how her CV sold her, and{" "}
-                  <span className="w-hl-solid">5 companies replied in less than a week.</span>
-                </span>
-              </h1>
-              <p className="animate-fade-in mt-7 max-w-xl text-[17px] leading-[1.7] text-white/65 [animation-delay:550ms] opacity-0 sm:text-lg">
-                A few days later, she had a job offer. Below, you&apos;ll see the most common mistake we
-                fix in CVs like hers, why yours is probably making it too, and how we can fix yours in as
-                little as 24 hours.
+              <span className="animate-fade-in mt-3 block text-3xl tracking-wide text-white opacity-0 [animation-delay:250ms] sm:text-4xl lg:text-5xl">
+                Then we changed how her CV sold her, and
+              </span>
+              <span className="animate-fade-in mt-2 block text-6xl leading-[0.95] text-gold opacity-0 [animation-delay:400ms] sm:text-[5.5rem] lg:text-[6.75rem]">
+                5 companies replied
+              </span>
+              <span className="animate-fade-in mt-2 block text-3xl tracking-wide text-white/90 opacity-0 [animation-delay:550ms] sm:text-4xl lg:text-5xl">
+                in less than a week.
+              </span>
+            </h1>
+            <p className="animate-fade-in mx-auto mt-8 max-w-2xl text-[17px] leading-[1.7] text-white/80 opacity-0 [animation-delay:700ms] sm:text-lg">
+              A few days later, she had a job offer. Below, you&apos;ll see the most common mistake we
+              fix in CVs like hers, why yours is probably making it too, and how we can fix yours in as
+              little as 24 hours.
+            </p>
+            <div className="animate-fade-in mt-9 flex flex-col items-center gap-3 opacity-0 [animation-delay:850ms]">
+              <ApplyButton label="Yes, I want more interview invites" />
+              <p className="text-sm text-white/70">
+                It&apos;s a 1-minute form, and you don&apos;t pay anything to fill it.
               </p>
-              <div className="animate-fade-in mt-9 flex flex-col items-start gap-3 [animation-delay:700ms] opacity-0">
-                <ApplyButton label="Yes, I want more interview invites" />
-                <p className="pl-1 text-sm text-white/45">
-                  It&apos;s a 1-minute form, and you don&apos;t pay anything to fill it.
-                </p>
+            </div>
+            <div className="animate-fade-up mx-auto mt-14 max-w-[320px] opacity-0 [animation-delay:1000ms]">
+              <div className="rounded-[2.2rem] bg-black p-2.5 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/15">
+                <Image
+                  src="/writing/ayomide-replies.jpg"
+                  alt="Ayomide's WhatsApp message saying she got replies from 5 companies in less than a week, followed by an offer of employment"
+                  width={485}
+                  height={865}
+                  priority
+                  className="w-full rounded-[1.7rem]"
+                />
               </div>
             </div>
-            <HeroChat />
           </div>
         </section>
 
@@ -567,7 +534,7 @@ export default function WritingPage() {
                 <p className="font-display text-lg font-semibold leading-snug tracking-[-0.03em] text-ink-900 transition-colors duration-500 group-hover:text-white">
                   {title}
                 </p>
-                <p className="mt-3 text-[15px] leading-[1.7] text-ink-400 transition-colors duration-500 group-hover:text-white/70">
+                <p className="mt-3 text-[15px] leading-[1.7] text-ink-600 transition-colors duration-500 group-hover:text-white/85">
                   {body}
                 </p>
               </li>
@@ -607,14 +574,14 @@ export default function WritingPage() {
                 style={delay(i * 70)}
                 className="group grid grid-cols-[3.25rem_1fr] gap-4 py-7 sm:grid-cols-[5rem_1fr]"
               >
-                <span className="font-mono text-3xl font-medium text-white/20 transition-colors duration-300 group-hover:text-gold sm:text-4xl">
+                <span className="font-mono text-3xl font-medium text-white/70 transition-colors duration-300 group-hover:text-gold sm:text-4xl">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span>
                   <span className="block font-display text-lg font-semibold tracking-[-0.03em] text-white sm:text-xl">
                     {title}
                   </span>
-                  <span className="mt-2 block text-[16px] leading-[1.7] text-white/60">{body}</span>
+                  <span className="mt-2 block text-[16px] leading-[1.7] text-white/80">{body}</span>
                 </span>
               </li>
             ))}
@@ -694,7 +661,7 @@ export default function WritingPage() {
               >
                 <article className="flex h-full flex-col rounded-[calc(2rem-1px)] bg-[#0B1433] p-7 sm:p-8">
                   <div className="flex items-center justify-between">
-                    <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/50">{pkg.name}</p>
+                    <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/75">{pkg.name}</p>
                     {pkg.popular && (
                       <span className="rounded-full bg-gold px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-900">
                         Most popular
@@ -704,7 +671,7 @@ export default function WritingPage() {
                   <h3 className="mt-3 font-display text-2xl font-semibold tracking-[-0.04em] text-white">{pkg.system}</h3>
 
                   <div className="mt-7 rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/[0.06]">
-                    <p className="flex items-baseline justify-between font-mono text-[12px] uppercase tracking-wider text-white/45">
+                    <p className="flex items-baseline justify-between font-mono text-[12px] uppercase tracking-wider text-white/70">
                       <span>Total value</span>
                       <span className="text-[15px] normal-case tracking-normal line-through decoration-gold/70 decoration-2">
                         {formatNaira(totalValue(pkg))}
@@ -717,11 +684,11 @@ export default function WritingPage() {
                       </p>
                     </div>
                   </div>
-                  <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-wider text-white/40">
+                  <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-wider text-white/70">
                     Ready in {pkg.delivery}
                   </p>
 
-                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">What we do for you</p>
+                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">What we do for you</p>
                   <ul className="mt-4 space-y-3">
                     {pkg.work.map((item) => (
                       <li key={item} className="flex gap-3 text-[15px] leading-snug text-white/85">
@@ -733,20 +700,20 @@ export default function WritingPage() {
                     ))}
                   </ul>
 
-                  <p className="mt-8 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
+                  <p className="mt-8 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">
                     <span>Free bonuses</span>
                     <span className="text-gold/80">{formatNaira(totalBonusValue(pkg.key))}</span>
                   </p>
                   <ul className="mb-8 mt-4 space-y-3.5">
                     {pkg.bonuses.map((bonus) => (
-                      <li key={bonus.name} className="flex gap-3 text-[14px] leading-snug text-white/65">
+                      <li key={bonus.name} className="flex gap-3 text-[14px] leading-snug text-white/85">
                         <Gift className="mt-0.5 h-4 w-4 shrink-0 text-gold/80" />
                         <span className="flex-1">{bonus.name}</span>
-                        <span className="shrink-0 font-mono text-[12px] text-white/40">{formatNaira(bonus.value)}</span>
+                        <span className="shrink-0 font-mono text-[12px] text-white/70">{formatNaira(bonus.value)}</span>
                       </li>
                     ))}
                     {pkg.key !== "basic" && (
-                      <li className="pl-7 font-mono text-[11px] uppercase tracking-wider text-white/35">
+                      <li className="pl-7 font-mono text-[11px] uppercase tracking-wider text-white/85">
                         + every bonus in {pkg.key === "standard" ? "Basic" : "Basic and Standard"}
                       </li>
                     )}
@@ -819,7 +786,7 @@ export default function WritingPage() {
                 <BeforeAfter name={c.name} before={c.before} after={c.after} />
                 <blockquote className="mt-6 flex-1 text-[16px] leading-[1.7] text-ink-600">&ldquo;{c.quote}&rdquo;</blockquote>
                 <figcaption className="mt-4 font-display text-sm font-semibold text-ink-900">
-                  {c.name} <span className="font-mono text-[11px] font-normal uppercase tracking-wider text-ink-400">· {c.place}</span>
+                  {c.name} <span className="font-mono text-[11px] font-normal uppercase tracking-wider text-ink-600">· {c.place}</span>
                 </figcaption>
               </figure>
             ))}
@@ -847,7 +814,7 @@ export default function WritingPage() {
                   <span className="block font-display text-lg font-semibold leading-snug tracking-[-0.03em] text-ink-900">
                     {title}
                   </span>
-                  <span className="mt-2 block text-[15px] leading-[1.7] text-ink-400">{body}</span>
+                  <span className="mt-2 block text-[15px] leading-[1.7] text-ink-600">{body}</span>
                 </span>
               </li>
             ))}
@@ -874,7 +841,7 @@ export default function WritingPage() {
                     +
                   </span>
                 </summary>
-                <p className="w-faq-body px-6 pb-6 text-[16px] leading-[1.7] text-ink-400">{a}</p>
+                <p className="w-faq-body px-6 pb-6 text-[16px] leading-[1.7] text-ink-600">{a}</p>
               </details>
             ))}
           </div>
@@ -925,7 +892,7 @@ export default function WritingPage() {
           <div aria-hidden className="absolute -bottom-40 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-gold/10 blur-[130px]" />
           <div className="relative mx-auto max-w-xl px-5">
             <H2 dark>Tell us about your job search</H2>
-            <p data-reveal className="mx-auto mt-6 max-w-md text-center text-[17px] leading-[1.7] text-white/65">
+            <p data-reveal className="mx-auto mt-6 max-w-md text-center text-[17px] leading-[1.7] text-white/85">
               Answer these five questions and WhatsApp opens with your answers ready to send to our team on{" "}
               <span className="font-semibold text-white">{WRITING_NUMBER_DISPLAY}</span>. You don&apos;t pay anything to
               start the chat.
@@ -936,7 +903,7 @@ export default function WritingPage() {
           </div>
         </section>
 
-        <footer className="border-t border-white/5 bg-[#040920] pb-24 pt-10 text-center font-mono text-[11px] uppercase tracking-wider text-white/35 sm:pb-10">
+        <footer className="border-t border-white/5 bg-[#040920] pb-24 pt-10 text-center font-mono text-[11px] uppercase tracking-wider text-white/85 sm:pb-10">
           <p className="mx-auto mb-3 max-w-xl px-5 normal-case tracking-normal">
             The stories on this page are from real JobMingle clients. Results vary from person to person.
           </p>

@@ -12,6 +12,9 @@ export type WritingPackage = {
   price: number;
   delivery: string;
   popular?: boolean;
+  // Overrides the struck-through figure when it shouldn't be the
+  // computed price + bonuses total.
+  crossedOut?: number;
   work: string[];
   bonuses: Bonus[];
 };
@@ -65,7 +68,8 @@ export const PACKAGES: WritingPackage[] = [
     key: "premium",
     name: "Premium",
     system: "The Get-Hired System",
-    price: 70000,
+    price: 80000,
+    crossedOut: 150000,
     delivery: "7 to 10 days",
     work: [
       "Everything in Standard",
@@ -143,5 +147,5 @@ export function totalBonusValue(key: PackageKey): number {
 // What the card shows struck through: the price plus everything in the
 // bonus stack, so the real price reads as the discount.
 export function totalValue(pkg: WritingPackage): number {
-  return pkg.price + totalBonusValue(pkg.key);
+  return pkg.crossedOut ?? pkg.price + totalBonusValue(pkg.key);
 }

@@ -15,7 +15,7 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   await expect(page.locator("a[href*='paystack']")).toHaveCount(0);
 
   await page.getByTestId("choose-standard").click();
-  await expect(page.getByTestId("w-package-standard")).toBeChecked();
+  await expect(page.getByTestId("w-package")).toHaveValue("standard");
 
   await page.getByTestId("w-submit").click();
   await expect(page.getByText(/answer all five questions/i)).toBeVisible();
@@ -23,7 +23,7 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   await page.getByTestId("w-name").fill("Amaka Obi");
   await page.getByTestId("w-role").fill("Customer service");
   await page.getByText("Both", { exact: true }).click();
-  await page.getByText("3 to 6 months").click();
+  await page.getByTestId("w-duration").selectOption("3 to 6 months");
 
   const popupPromise = context.waitForEvent("page");
   await page.getByTestId("w-submit").click();

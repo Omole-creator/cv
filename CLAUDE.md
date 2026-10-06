@@ -144,7 +144,9 @@ at the bottom (`PackageContext`) before it opens WhatsApp on the single number i
 purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
 `public/writing/` hide phone numbers (cropped out, or last 4 digits blurred); keep it that way for
 new ones. Each pricing card strikes through `totalValue()` (price + every bonus value, including
-lower tiers) to reveal the real price. Bonus values in `writingPackages.ts` are placeholders.
+lower tiers, unless the package sets `crossedOut`, as Premium does) to reveal the real price.
+The hero headline uses Anton (`font-anton`) in a stacked-scale style; body subheads use the
+`font-helvetica` stack. Bonus values in `writingPackages.ts` are placeholders.
 Motion on `/writing` (scroll reveals, the gold highlighter sweep, hero chat) is CSS in
 `globals.css` under `.w-*` / `html.fx`, driven by one observer in `components/writing/ScrollFx.tsx`;
 an inline script sets `html.fx` so nothing is hidden if JS fails. Videos play inline via

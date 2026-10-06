@@ -28,6 +28,8 @@ const config: Config = {
         display: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        anton: ["var(--font-anton)", "Impact", "sans-serif"],
+        helvetica: ["\"Helvetica Neue\"", "Helvetica", "Arial", "sans-serif"],
       },
       boxShadow: {
         card: "0 1px 2px rgba(6,13,41,0.04), 0 8px 24px -8px rgba(6,13,41,0.12)",

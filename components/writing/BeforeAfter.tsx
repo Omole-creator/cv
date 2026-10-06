@@ -43,7 +43,7 @@ export default function BeforeAfter({
               aria-selected={active}
               onClick={() => setShowAfter(label === "After")}
               className={`relative z-10 rounded-full py-1.5 transition-colors ${
-                active ? "text-white" : "text-ink-400 hover:text-ink-900"
+                active ? "text-white" : "text-ink-600 hover:text-ink-900"
               }`}
             >
               {label}
