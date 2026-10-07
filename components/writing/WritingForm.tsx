@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, ReactNode, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { generateWhatsAppLink } from "@/lib/whatsapp";
 import {
@@ -12,6 +12,7 @@ import {
   PACKAGES,
   WRITING_NUMBER,
 } from "@/lib/writingPackages";
+import { loadMetaPixel, trackWritingSubmit } from "@/lib/metaPixel";
 import { usePackage } from "./PackageContext";
 
 const fieldLabel = "mb-2 block font-display text-[15px] font-semibold tracking-[-0.02em] text-ink-900";
@@ -59,6 +60,9 @@ export default function WritingForm() {
   const [duration, setDuration] = useState("");
   const [touched, setTouched] = useState(false);
 
+  // Loads the pixel silently (no PageView); events only fire on a valid submit.
+  useEffect(loadMetaPixel, []);
+
   const isValid =
     name.trim() !== "" && role.trim() !== "" && location !== "" && duration !== "" && choice !== "";
 
@@ -75,6 +79,13 @@ export default function WritingForm() {
       choice: choice as PackageChoice,
     });
     window.open(generateWhatsAppLink(WRITING_NUMBER, message), "_blank", "noopener,noreferrer");
+
+    // "Not sure yet" is valued at the cheapest package.
+    const picked = PACKAGES.find((p) => p.key === choice) ?? PACKAGES[0];
+    trackWritingSubmit({
+      packageName: choice === "unsure" ? "Not sure yet" : picked.name,
+      value: picked.price,
+    });
   };
 
   const packageOptions: [PackageChoice, string][] = [
