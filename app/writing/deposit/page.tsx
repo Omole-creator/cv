@@ -45,9 +45,6 @@ export default function DepositPage() {
         <p className="px-5 text-center font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-gold">
           Real receipts from our clients
         </p>
-        <p className="mx-auto mt-2 max-w-md px-5 text-center text-sm text-white/70">
-          They all sent money to JobMingle Limited, just like you.
-        </p>
         <ReceiptMarquee />
       </div>
     </main>
