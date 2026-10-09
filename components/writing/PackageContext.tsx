@@ -2,17 +2,17 @@
 
 import { createContext, ReactNode, useContext, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import type { PackageChoice } from "@/lib/writingPackages";
+import type { PackageKey } from "@/lib/writingPackages";
 
 type Ctx = {
-  choice: PackageChoice | "";
-  setChoice: (choice: PackageChoice) => void;
+  choice: PackageKey | "";
+  setChoice: (choice: PackageKey) => void;
 };
 
 const PackageContext = createContext<Ctx | null>(null);
 
 export function PackageProvider({ children }: { children: ReactNode }) {
-  const [choice, setChoice] = useState<PackageChoice | "">("");
+  const [choice, setChoice] = useState<PackageKey | "">("");
   return (
     <PackageContext.Provider value={{ choice, setChoice }}>{children}</PackageContext.Provider>
   );
@@ -35,7 +35,7 @@ export function ChoosePackageButton({
   label,
   featured,
 }: {
-  pkg: PackageChoice;
+  pkg: PackageKey;
   label: string;
   featured?: boolean;
 }) {

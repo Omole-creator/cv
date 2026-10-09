@@ -3,8 +3,10 @@
 // The pixel is set up so it records nothing on page load: no PageView, and
 // Meta's "automatic events" (button-click and page-metadata sniffing) are
 // switched off. The only event ever sent is Lead, fired by
-// trackWritingSubmit() when a visitor sends a valid form. Purchase is left
-// to real payments (uploaded to Meta separately), not form submits.
+// trackWritingSubmit() when a visitor clicks "I've paid" on the form's
+// deposit step. That click is a claim, not a verified transfer, so Purchase
+// is left to deposits confirmed in the bank app and uploaded to Meta
+// separately.
 //
 // It only loads on the live domain, so local dev and the Playwright suite
 // never send anything to Meta.

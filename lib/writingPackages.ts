@@ -3,13 +3,17 @@
 // page: /writing qualifies leads on price before they reach WhatsApp.
 
 export type PackageKey = "basic" | "standard" | "premium";
-export type PackageChoice = PackageKey | "unsure";
 
 export type WritingPackage = {
   key: PackageKey;
   name: string;
   system: string;
   price: number;
+  // Paid by bank transfer before the WhatsApp chat starts, then taken off
+  // the price. It filters out people who aren't ready to buy yet.
+  deposit: number;
+  // How the form's "what do you want us to do" question names this package.
+  service: string;
   delivery: string;
   popular?: boolean;
   // false: the card's bonus total and struck-through value count only
@@ -34,6 +38,8 @@ export const PACKAGES: WritingPackage[] = [
     name: "Basic",
     system: "The Get-Replies System",
     price: 20000,
+    deposit: 3000,
+    service: "CV + cover letter",
     delivery: "24 to 48 hours",
     work: [
       "Your CV and cover letter rewritten so the screening software companies use, in Nigeria and abroad, can read them properly",
@@ -51,6 +57,8 @@ export const PACKAGES: WritingPackage[] = [
     name: "Standard",
     system: "The Get-Found System",
     price: 50000,
+    deposit: 5000,
+    service: "CV + cover letter + LinkedIn optimization",
     delivery: "4 to 6 days",
     popular: true,
     work: [
@@ -69,6 +77,8 @@ export const PACKAGES: WritingPackage[] = [
     name: "Premium",
     system: "The Get-Hired System",
     price: 80000,
+    deposit: 5000,
+    service: "CV + cover letter + LinkedIn optimization + portfolio website",
     // Priced on its own bonuses only (80k + 70k = 150k). The Basic and
     // Standard bonuses still come with it, shown as unpriced extras.
     countLowerBonuses: false,
@@ -92,29 +102,41 @@ export const LOCATION_OPTIONS = [
   "Both",
 ] as const;
 
-export const DURATION_OPTIONS = [
-  "Less than 1 month",
-  "1 to 3 months",
-  "3 to 6 months",
-  "More than 6 months",
+// Company accounts only, never a personal one: it's part of why a deposit
+// to a stranger online doesn't feel like a scam.
+export const BANK_ACCOUNTS = [
+  { bank: "Globus Bank", number: "1000577565", name: "JobMingle Limited" },
+  { bank: "Zenith Bank", number: "1311340458", name: "JobMingle Limited" },
 ] as const;
 
 export function formatNaira(amount: number): string {
   return `₦${amount.toLocaleString("en-NG")}`;
 }
 
-export function packageLabel(choice: PackageChoice): string {
-  if (choice === "unsure") return "Not sure yet, please help me choose";
-  const pkg = PACKAGES.find((p) => p.key === choice)!;
+export function getPackage(key: PackageKey): WritingPackage {
+  return PACKAGES.find((p) => p.key === key)!;
+}
+
+export function packageLabel(key: PackageKey): string {
+  const pkg = getPackage(key);
   return `${pkg.name}, ${pkg.system} (${formatNaira(pkg.price)})`;
+}
+
+// The price line the visitor confirms on the form, repeated in their own
+// WhatsApp message so the cost is already settled before the chat starts.
+export function priceConfirmation(key: PackageKey): string {
+  const pkg = getPackage(key);
+  return `I understand ${pkg.name} costs ${formatNaira(pkg.price)} and I'm ready to pay now.`;
 }
 
 export type WritingLead = {
   name: string;
   role: string;
   location: string;
-  duration: string;
-  choice: PackageChoice;
+  choice: PackageKey;
+  // Name on the bank account the deposit came from, so the team can match
+  // the receipt to the transfer.
+  paidFrom: string;
 };
 
 export function buildWritingMessage(lead: WritingLead): string {
@@ -127,11 +149,13 @@ export function buildWritingMessage(lead: WritingLead): string {
     "*Where I want to work:*",
     lead.location,
     "",
-    "*How long I've been job hunting:*",
-    lead.duration,
-    "",
     "*Package:*",
     packageLabel(lead.choice),
+    "",
+    `*Price:* ${priceConfirmation(lead.choice)}`,
+    "",
+    "*Deposit:*",
+    `I've paid my ${formatNaira(getPackage(lead.choice).deposit)} deposit from the account of ${lead.paidFrom}. My receipt is below.`,
     "",
     "What do you need from me to get started?",
   ].join("\n");

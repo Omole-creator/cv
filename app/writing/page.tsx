@@ -322,11 +322,11 @@ const STEPS = [
 const FAQS = [
   [
     "Do I have to pay anything to fill the form?",
-    "No. The form just sends your answers to our team on WhatsApp. You only pay after we've talked and you've decided to go ahead.",
+    "The form is free. To start, you pay a small deposit by bank transfer: ₦3,000 for Basic, ₦5,000 for Standard or Premium. It comes off your total fee, so it doesn't cost you anything extra.",
   ],
   [
     "How do I know this isn't a scam?",
-    "We will never ask you to pay for a job or a \"job slot\". We're not a recruiter. You pay for a CV, a LinkedIn profile or a portfolio, and you only pay after you've talked to our team. Our clients' stories, with their names and faces, are all over this page.",
+    "We will never ask you to pay for a job or a \"job slot\". We're not a recruiter. You pay for a CV, a LinkedIn profile or a portfolio, into our company account in the name JobMingle Limited, never a personal account. Our clients' stories, with their names and faces, are all over this page.",
   ],
   [
     "Will you just add big grammar to my CV?",
@@ -897,8 +897,8 @@ export default function WritingPage() {
               </p>
               <p data-reveal>
                 <span className="mr-1 font-mono text-[13px] font-semibold text-ink-900">P.P.P.S.</span> Your CV, LinkedIn
-                profile or portfolio comes with unlimited revisions, and the 90-day guarantee covers you after that. The
-                form costs nothing, so the only risk is staying where you are.
+                profile or portfolio comes with unlimited revisions, and the 90-day guarantee covers you after that. Your
+                deposit comes off your total fee, so the only risk is staying where you are.
               </p>
             </div>
           </div>
@@ -911,9 +911,9 @@ export default function WritingPage() {
           <div className="relative mx-auto max-w-xl px-5">
             <H2 dark>Tell us about your job search</H2>
             <p data-reveal className="mx-auto mt-6 max-w-md text-center text-[17px] leading-[1.7] text-white/85">
-              Answer these five questions and WhatsApp opens with your answers ready to send to our team on{" "}
-              <span className="whitespace-nowrap font-semibold text-white">{WRITING_NUMBER_DISPLAY}</span>. You don&apos;t pay anything to
-              start the chat.
+              Answer four questions, pay a small deposit that comes off your total, and WhatsApp opens with your
+              answers ready to send to our team on{" "}
+              <span className="whitespace-nowrap font-semibold text-white">{WRITING_NUMBER_DISPLAY}</span>.
             </p>
             <div data-reveal className="mt-10">
               <WritingForm />

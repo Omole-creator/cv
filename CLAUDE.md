@@ -137,10 +137,15 @@ useful since a hard-gate-triggering finding may also get echoed into the always-
 list further down the same page.
 
 **`/writing` is a separate long-form sales page** (`app/writing/page.tsx`, client pieces in
-`components/writing/`), rebuilt from jobmingle.co/careerservice. Its goal is a form fill, not a
-payment: there are no checkout links, and package buttons only preselect the package in the form
-at the bottom (`PackageContext`) before it opens WhatsApp on the single number in
-`lib/writingPackages.ts` (not the rotating pair). Unlike `/`, this page shows naira prices on
+`components/writing/`), rebuilt from jobmingle.co/careerservice. There are no checkout links:
+package buttons only preselect the package in the form at the bottom (`PackageContext`). The form
+is two steps in one card (`WritingForm.tsx`): details plus a required "ready to pay now" price tick
+box, then a deposit step showing the company bank accounts (`BANK_ACCOUNTS`, each package's
+`deposit`, which comes off the price). Only the deposit step's "I've paid" button opens WhatsApp on
+the single number in `lib/writingPackages.ts` (not the rotating pair), and the message carries the
+price confirmation and the payer's account name. A static site can't verify a bank transfer, so the
+real filter is the team only replying to chats with a receipt; that's also why the pixel fires Lead
+on that click and never Purchase. Unlike `/`, this page shows naira prices on
 purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
 `public/writing/` hide phone numbers (cropped out, or last 4 digits blurred); keep it that way for
 new ones. Each pricing card strikes through `totalValue()` (price + every bonus value, including
