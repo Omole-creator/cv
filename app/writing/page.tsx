@@ -7,7 +7,8 @@ import {
   ChoosePackageButton,
   PackageProvider,
 } from "@/components/writing/PackageContext";
-import WritingForm from "@/components/writing/WritingForm";
+import { Suspense } from "react";
+import WritingForm, { FormFallback } from "@/components/writing/WritingForm";
 import StickyCta from "@/components/writing/StickyCta";
 import ScrollFx from "@/components/writing/ScrollFx";
 import SiteNav from "@/components/writing/SiteNav";
@@ -923,14 +924,16 @@ export default function WritingPage() {
               Real receipts from our clients
             </p>
             <p className="mx-auto mt-2 max-w-md px-5 text-center text-sm text-white/70">
-              Every transfer went to JobMingle Limited. We hid their names.
+              Every transfer went to JobMingle Limited. We hid their full names and numbers.
             </p>
             <ReceiptMarquee />
           </div>
 
           <div className="relative mx-auto max-w-xl px-5">
             <div data-reveal className="mt-14">
-              <WritingForm />
+              <Suspense fallback={<FormFallback />}>
+                <WritingForm />
+              </Suspense>
             </div>
           </div>
         </section>

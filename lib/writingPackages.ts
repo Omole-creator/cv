@@ -107,6 +107,7 @@ export const LOCATION_OPTIONS = [
 export const BANK_ACCOUNTS = [
   { bank: "Globus Bank", number: "1000577565", name: "JobMingle Limited" },
   { bank: "Zenith Bank", number: "1311340458", name: "JobMingle Limited" },
+  { bank: "UBA", number: "1028248447", name: "JobMingle Limited" },
 ] as const;
 
 export function formatNaira(amount: number): string {
@@ -129,15 +130,37 @@ export function priceConfirmation(key: PackageKey): string {
   return `I understand ${pkg.name} costs ${formatNaira(pkg.price)} and I'm ready to pay now.`;
 }
 
-export type WritingLead = {
+export type WritingAnswers = {
   name: string;
   role: string;
   location: string;
   choice: PackageKey;
+};
+
+export type WritingLead = WritingAnswers & {
   // Name on the bank account the deposit came from, so the team can match
   // the receipt to the transfer.
   paidFrom: string;
 };
+
+// The form's answers travel to /writing/deposit (and back, for "change my
+// answers") in the query string, so a refresh never loses them.
+export function answersQuery(a: WritingAnswers): string {
+  return new URLSearchParams({ p: a.choice, name: a.name, role: a.role, loc: a.location }).toString();
+}
+
+// Null when anything is missing or not one of the form's own options.
+export function parseAnswers(search: string): WritingAnswers | null {
+  const q = new URLSearchParams(search);
+  const choice = q.get("p") ?? "";
+  const name = (q.get("name") ?? "").trim();
+  const role = (q.get("role") ?? "").trim();
+  const location = q.get("loc") ?? "";
+  if (!PACKAGES.some((p) => p.key === choice)) return null;
+  if (!(LOCATION_OPTIONS as readonly string[]).includes(location)) return null;
+  if (name === "" || role === "") return null;
+  return { name, role, location, choice: choice as PackageKey };
+}
 
 export function buildWritingMessage(lead: WritingLead): string {
   return [

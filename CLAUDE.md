@@ -139,9 +139,11 @@ list further down the same page.
 **`/writing` is a separate long-form sales page** (`app/writing/page.tsx`, client pieces in
 `components/writing/`), rebuilt from jobmingle.co/careerservice. There are no checkout links:
 package buttons only preselect the package in the form at the bottom (`PackageContext`). The form
-is two steps in one card (`WritingForm.tsx`): details plus a required "ready to pay now" price tick
-box, then a deposit step showing the company bank accounts (`BANK_ACCOUNTS`, each package's
-`deposit`, which comes off the price). Only the deposit step's "I've paid" button opens WhatsApp on
+is two steps: `WritingForm.tsx` (details plus a required "ready to pay now" price tick box), then
+its own page, `/writing/deposit` (`DepositCard.tsx`), showing the company bank accounts
+(`BANK_ACCOUNTS`, each package's `deposit`, which comes off the price). The answers travel between
+the two in the query string (`answersQuery`/`parseAnswers`), so a refresh or "change my answers"
+never loses them. Only the deposit page's "I've paid" button opens WhatsApp on
 the single number in `lib/writingPackages.ts` (not the rotating pair), and the message carries the
 price confirmation and the payer's account name. A static site can't verify a bank transfer, so the
 real filter is the team only replying to chats with a receipt; that's also why the pixel fires Lead
@@ -149,7 +151,8 @@ on that click and never Purchase. Unlike `/`, this page shows naira prices on
 purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
 `public/writing/` hide phone numbers (cropped out, or last 4 digits blurred); keep it that way for
 new ones. Client payment receipts in `public/writing/receipts/` (the `ReceiptMarquee`
-above the form) are cropped to the receipt card with sender names blurred; the raw chat screenshots
+above the form) are cropped to the receipt card, keeping only the sender's first name and blurring the rest of the
+name and the last 4 digits of their phone/account number; the raw chat screenshots
 they came from show full phone numbers and must never be committed. Each pricing card strikes through `totalValue()` (price + every bonus value, including
 lower tiers, unless the package sets `countLowerBonuses: false`, as Premium does) to reveal the real price.
 The hero headline is Geist in a stacked-scale layout (small, medium, one huge gold line,

@@ -33,14 +33,17 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   );
   await page.getByTestId("w-confirm").click();
 
-  // The details step leads to the deposit, not straight to WhatsApp.
+  // The details step leads to the deposit page, not straight to WhatsApp.
   await page.getByTestId("w-submit").click();
-  await expect(page.getByText("Pay your ₦5,000 deposit")).toBeVisible();
+  await expect(page).toHaveURL(/\/writing\/deposit\?/);
+  await expect(page.getByRole("heading", { name: "Pay your ₦5,000 deposit" })).toBeVisible();
+  await expect(page.getByTestId("deposit-summary")).toContainText("₦45,000");
   await expect(page.getByTestId("w-banks")).toContainText("1000577565");
   await expect(page.getByTestId("w-banks")).toContainText("1311340458");
+  await expect(page.getByTestId("w-banks")).toContainText("1028248447");
 
   await page.getByTestId("w-send").click();
-  await expect(page.getByText(/name on the account you paid from/i).last()).toBeVisible();
+  await expect(page.getByText(/name of the person who sent the money/i)).toBeVisible();
   await page.getByTestId("w-paid-from").fill("Amaka Obi");
 
   const popupPromise = context.waitForEvent("page");
@@ -54,4 +57,18 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   expect(text).toContain("Standard, The Get-Found System (₦50,000)");
   expect(text).toContain("I understand Standard costs ₦50,000 and I'm ready to pay now.");
   expect(text).toContain("I've paid my ₦5,000 deposit from the account of Amaka Obi.");
+});
+
+test("the deposit page sends visitors without answers back to the form", async ({ page }) => {
+  await page.goto("/writing/deposit");
+  await expect(page.getByTestId("deposit-missing")).toBeVisible();
+  await expect(page.getByTestId("w-banks")).toHaveCount(0);
+});
+
+test("change my answers on the deposit page refills the form", async ({ page }) => {
+  await page.goto("/writing/deposit?p=basic&name=Amaka+Obi&role=Admin&loc=Both");
+  await expect(page.getByRole("heading", { name: "Pay your ₦3,000 deposit" })).toBeVisible();
+  await page.getByText("Change my answers").click();
+  await expect(page.getByTestId("w-name")).toHaveValue("Amaka Obi");
+  await expect(page.getByTestId("w-package")).toHaveValue("basic");
 });
