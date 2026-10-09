@@ -18,9 +18,9 @@ const RECEIPTS = [
 
 // Two copies of the strip side by side; the track slides one copy's width
 // to the right and loops, so the motion never shows a seam.
-export default function ReceiptMarquee() {
+export default function ReceiptMarquee({ className = "mt-12" }: { className?: string }) {
   return (
-    <div data-testid="receipt-marquee" className="w-marquee mt-12">
+    <div data-testid="receipt-marquee" className={`w-marquee ${className}`}>
       <div className="w-marquee-track">
         {[0, 1].map((copy) => (
           <ul key={copy} aria-hidden={copy === 1} className="flex shrink-0 items-center gap-5 pr-5">

@@ -35,17 +35,17 @@ export default function DepositPage() {
         </Link>
       </header>
 
-      <div className="relative mx-auto mt-6 max-w-xl px-5">
-        <Suspense fallback={<FormFallback />}>
-          <DepositCard />
-        </Suspense>
-      </div>
-
-      <div className="relative mt-14">
+      <div className="relative mt-6">
         <p className="px-5 text-center font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-gold">
           Real receipts from our clients
         </p>
-        <ReceiptMarquee />
+        <ReceiptMarquee className="mt-6" />
+      </div>
+
+      <div className="relative mx-auto mt-10 max-w-xl px-5">
+        <Suspense fallback={<FormFallback />}>
+          <DepositCard />
+        </Suspense>
       </div>
     </main>
   );
