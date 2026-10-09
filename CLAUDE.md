@@ -148,7 +148,9 @@ real filter is the team only replying to chats with a receipt; that's also why t
 on that click and never Purchase. Unlike `/`, this page shows naira prices on
 purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
 `public/writing/` hide phone numbers (cropped out, or last 4 digits blurred); keep it that way for
-new ones. Each pricing card strikes through `totalValue()` (price + every bonus value, including
+new ones. Client payment receipts in `public/writing/receipts/` (the `ReceiptMarquee`
+above the form) are cropped to the receipt card with sender names blurred; the raw chat screenshots
+they came from show full phone numbers and must never be committed. Each pricing card strikes through `totalValue()` (price + every bonus value, including
 lower tiers, unless the package sets `countLowerBonuses: false`, as Premium does) to reveal the real price.
 The hero headline is Geist in a stacked-scale layout (small, medium, one huge gold line,
 medium); body subheads use the `font-helvetica` stack. Bonus values in `writingPackages.ts` are placeholders.

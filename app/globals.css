@@ -294,3 +294,35 @@ html.fx .w-hl-solid {
     animation: none;
   }
 }
+
+/* Receipt carousel on /writing: slides left to right, pauses on hover,
+   fades out at both edges. */
+.w-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.w-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: w-marquee 70s linear infinite;
+}
+.w-marquee:hover .w-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes w-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .w-marquee {
+    overflow-x: auto;
+  }
+  .w-marquee-track {
+    animation: none;
+  }
+}

@@ -13,6 +13,7 @@ import ScrollFx from "@/components/writing/ScrollFx";
 import SiteNav from "@/components/writing/SiteNav";
 import YouTubeLite from "@/components/writing/YouTubeLite";
 import BeforeAfter from "@/components/writing/BeforeAfter";
+import ReceiptMarquee from "@/components/writing/ReceiptMarquee";
 import {
   formatNaira,
   PACKAGES,
@@ -915,7 +916,20 @@ export default function WritingPage() {
               answers ready to send to our team on{" "}
               <span className="whitespace-nowrap font-semibold text-white">{WRITING_NUMBER_DISPLAY}</span>.
             </p>
-            <div data-reveal className="mt-10">
+          </div>
+
+          <div data-reveal className="relative mt-14">
+            <p className="px-5 text-center font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-gold">
+              Real receipts from our clients
+            </p>
+            <p className="mx-auto mt-2 max-w-md px-5 text-center text-sm text-white/70">
+              Every transfer went to JobMingle Limited. We hid their names.
+            </p>
+            <ReceiptMarquee />
+          </div>
+
+          <div className="relative mx-auto max-w-xl px-5">
+            <div data-reveal className="mt-14">
               <WritingForm />
             </div>
           </div>
