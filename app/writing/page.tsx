@@ -20,7 +20,6 @@ import {
   PACKAGES,
   totalBonusValue,
   totalValue,
-  WRITING_NUMBER_DISPLAY,
 } from "@/lib/writingPackages";
 
 export const metadata: Metadata = {
@@ -305,15 +304,15 @@ const MISTAKES = [
 const STEPS = [
   [
     "Fill in the short form at the bottom of this page.",
-    "It's five quick questions and takes about a minute.",
+    "It's four quick questions and takes about a minute.",
+  ],
+  [
+    "Pay a small deposit to our company account.",
+    "It's ₦3,000 for Basic or ₦5,000 for Standard and Premium, and it comes off your total.",
   ],
   [
     "Press the button and WhatsApp opens with your answers already typed.",
-    `Just press send. It goes straight to our team on ${WRITING_NUMBER_DISPLAY}.`,
-  ],
-  [
-    "Our team replies, answers your questions, and helps you pick the right package.",
-    "You only pay once you've spoken to us and you're happy to go ahead.",
+    "Add the picture of your receipt and press send. Our team replies from there.",
   ],
   [
     "We send for your details or work from your old CV, then we get to work.",
@@ -914,8 +913,7 @@ export default function WritingPage() {
             <H2 dark>Tell us about your job search</H2>
             <p data-reveal className="mx-auto mt-6 max-w-md text-center text-[17px] leading-[1.7] text-white/85">
               Answer four questions, pay a small deposit that comes off your total, and WhatsApp opens with your
-              answers ready to send to our team on{" "}
-              <span className="whitespace-nowrap font-semibold text-white">{WRITING_NUMBER_DISPLAY}</span>.
+              answers ready to send to our team.
             </p>
           </div>
 

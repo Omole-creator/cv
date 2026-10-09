@@ -30,7 +30,6 @@ export type Bonus = { name: string; value: number };
 // The one number this page sends leads to. Deliberately not the rotating
 // pair in lib/whatsapp.ts.
 export const WRITING_NUMBER = "2348074071356";
-export const WRITING_NUMBER_DISPLAY = "0807 407 1356";
 
 export const PACKAGES: WritingPackage[] = [
   {
