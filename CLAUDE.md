@@ -152,7 +152,7 @@ on that click and never Purchase. Unlike `/`, this page shows naira prices on
 purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof screenshots in
 `public/writing/` hide phone numbers (cropped out, or last 4 digits blurred); keep it that way for
 new ones. Client payment receipts in `public/writing/receipts/` (the `ReceiptMarquee`
-above the form) are cropped to the receipt card, keeping only the sender's first name and blurring the rest of the
+below the form) are cropped to the receipt card, keeping only the sender's first name and blurring the rest of the
 name and the last 4 digits of their phone/account number; the raw chat screenshots
 they came from show full phone numbers and must never be committed. The offer is a CV only,
 priced by years of experience (four `PACKAGES` tiers), with a cover letter as an optional add-on

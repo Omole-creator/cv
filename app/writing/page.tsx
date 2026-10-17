@@ -353,7 +353,14 @@ export default function WritingPage() {
   return (
     <PackageProvider>
       {/* Turns motion on before first paint. Without JS, nothing is hidden. */}
-      <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('fx')" }} />
+      {/* Also stops the browser restoring the old scroll spot on reload, so
+          the page always opens on the hero. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "document.documentElement.classList.add('fx');if('scrollRestoration' in history)history.scrollRestoration='manual'",
+        }}
+      />
       <ScrollFx />
       <SiteNav />
       <main className="overflow-x-clip">
@@ -842,6 +849,14 @@ export default function WritingPage() {
             </p>
           </div>
 
+          <div className="relative mx-auto max-w-xl px-5">
+            <div data-reveal className="mt-14">
+              <Suspense fallback={<FormFallback />}>
+                <WritingForm />
+              </Suspense>
+            </div>
+          </div>
+
           <div data-reveal className="relative mt-14">
             <p className="px-5 text-center font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-gold">
               Real receipts from our clients
@@ -850,14 +865,6 @@ export default function WritingPage() {
               Every transfer went to JobMingle Limited. We hid their full names and numbers.
             </p>
             <ReceiptMarquee />
-          </div>
-
-          <div className="relative mx-auto max-w-xl px-5">
-            <div data-reveal className="mt-14">
-              <Suspense fallback={<FormFallback />}>
-                <WritingForm />
-              </Suspense>
-            </div>
           </div>
         </section>
 

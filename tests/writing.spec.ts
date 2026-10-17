@@ -11,6 +11,8 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   });
 
   await page.goto("/writing");
+  // The page opens on the hero, not partway down.
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
   // No payment links on this page; the only path is the form.
   await expect(page.locator("a[href*='paystack']")).toHaveCount(0);
 
@@ -82,6 +84,8 @@ test("change my answers on the deposit page refills the form", async ({ page }) 
   await page.getByText("Change my answers").click();
   await expect(page.getByTestId("w-name")).toHaveValue("Amaka Obi");
   await expect(page.getByTestId("w-name")).toBeInViewport();
+  // The #apply is cleared, so a refresh opens on the hero again.
+  await expect(page).not.toHaveURL(/#apply/);
   await page.getByTestId("w-next").click();
   await expect(page.getByTestId("w-package")).toHaveValue("senior");
 });

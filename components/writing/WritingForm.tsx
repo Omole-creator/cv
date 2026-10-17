@@ -82,10 +82,17 @@ export default function WritingForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
   // Links into the form (/writing#apply) make the browser stop at the top
-  // of the section, above the receipts. Once the form has loaded, move on
-  // down to the card itself.
+  // of the section. Once the form has loaded, move on down to the card,
+  // then drop the #apply so a refresh opens on the hero again. Deferred
+  // because Next writes the full URL back into history after this effect,
+  // and the browser's own jump to #apply lands after it too.
   useEffect(() => {
-    if (window.location.hash === "#apply") formRef.current?.scrollIntoView({ block: "start" });
+    if (window.location.hash !== "#apply") return;
+    const timer = setTimeout(() => {
+      formRef.current?.scrollIntoView({ block: "start" });
+      history.replaceState(history.state, "", window.location.pathname + window.location.search);
+    }, 50);
+    return () => clearTimeout(timer);
   }, []);
 
   const pkg = choice === "" ? null : getPackage(choice);
