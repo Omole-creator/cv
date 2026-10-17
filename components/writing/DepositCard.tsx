@@ -43,7 +43,7 @@ function CopyNumber({ number }: { number: string }) {
   );
 }
 
-// Step 2 of 2 on its own page. The answers from step 1 arrive in the query
+// Step 3 of 3 on its own page. The answers from step 1 arrive in the query
 // string. WhatsApp only opens from here, and the message says they've paid,
 // so the team only answers chats that come with a receipt.
 export default function DepositCard() {
@@ -94,7 +94,7 @@ export default function DepositCard() {
       </Link>
 
       <div>
-        <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-ink-900/70">Step 2 of 2</p>
+        <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-ink-900/70">Step 3 of 3</p>
         <h1 className="mt-2 font-display text-[28px] font-semibold leading-tight tracking-[-0.03em] text-ink-900">
           Pay your {formatNaira(pkg.deposit)} deposit
         </h1>

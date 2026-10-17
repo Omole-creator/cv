@@ -29,7 +29,7 @@ export const PACKAGES: WritingPackage[] = [
   { key: "early", name: "Early career", years: "0 to 3 years", price: 10000, coverLetter: 3000, deposit: 3000, delivery: "24 to 48 hours" },
   { key: "mid", name: "Mid career", years: "4 to 7 years", price: 15000, coverLetter: 5000, deposit: 3000, delivery: "24 to 48 hours", popular: true },
   { key: "senior", name: "Senior", years: "8 to 12 years", price: 25000, coverLetter: 7000, deposit: 5000, delivery: "24 to 48 hours" },
-  { key: "exec", name: "Leadership", years: "12+ years", price: 40000, coverLetter: 10000, deposit: 5000, delivery: "24 to 48 hours" },
+  { key: "exec", name: "Executive", years: "12+ years", price: 40000, coverLetter: 10000, deposit: 5000, delivery: "24 to 48 hours" },
 ];
 
 // What every level gets, shown on each card.

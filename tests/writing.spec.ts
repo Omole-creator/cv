@@ -15,17 +15,23 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   await expect(page.locator("a[href*='paystack']")).toHaveCount(0);
 
   await page.getByTestId("choose-mid").click();
-  await expect(page.getByTestId("w-package")).toHaveValue("mid");
+  await expect(page.getByTestId("w-step")).toContainText("Step 1 of 3");
 
-  await expect(page.getByTestId("w-price")).toContainText("Your total: ₦15,000");
-  await page.getByTestId("w-cover").click();
-  await expect(page.getByTestId("w-price")).toContainText("Your total: ₦20,000");
-  await page.getByTestId("w-submit").click();
-  await expect(page.getByText(/answer all four questions/i)).toBeVisible();
+  // Step 1 won't move on until all three questions are answered.
+  await page.getByTestId("w-next").click();
+  await expect(page.getByText(/answer all three questions/i)).toBeVisible();
 
   await page.getByTestId("w-name").fill("Amaka Obi");
   await page.getByTestId("w-role").fill("Customer service");
   await page.getByText("Both", { exact: true }).click();
+  await page.getByTestId("w-next").click();
+
+  // Step 2 keeps the level picked on the card.
+  await expect(page.getByTestId("w-step")).toContainText("Step 2 of 3");
+  await expect(page.getByTestId("w-package")).toHaveValue("mid");
+  await expect(page.getByTestId("w-price")).toContainText("Your total: ₦15,000");
+  await page.getByTestId("w-cover").click();
+  await expect(page.getByTestId("w-price")).toContainText("Your total: ₦20,000");
 
   // Not ticking the price box still blocks the submit.
   await page.getByTestId("w-submit").click();
@@ -73,5 +79,6 @@ test("change my answers on the deposit page refills the form", async ({ page }) 
   await expect(page.getByTestId("deposit-summary")).toContainText("₦25,000");
   await page.getByText("Change my answers").click();
   await expect(page.getByTestId("w-name")).toHaveValue("Amaka Obi");
+  await page.getByTestId("w-next").click();
   await expect(page.getByTestId("w-package")).toHaveValue("senior");
 });

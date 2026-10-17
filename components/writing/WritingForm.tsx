@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, ReactNode, useState } from "react";
+import { FormEvent, ReactNode, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import {
@@ -56,8 +56,9 @@ function Select({
   );
 }
 
-// Step 1 of 2: the visitor's details and price confirmation. A valid submit
-// moves to /writing/deposit, which is the only place WhatsApp opens from.
+// Steps 1 and 2 of 3: the visitor's details, then their CV level and price
+// confirmation. A valid step 2 moves to /writing/deposit (step 3), which is
+// the only place WhatsApp opens from.
 // Rendered inside <Suspense> (it reads the query string), so the static
 // HTML shows this empty card until the page hydrates.
 export function FormFallback() {
@@ -77,125 +78,173 @@ export default function WritingForm() {
   const [coverLetter, setCoverLetter] = useState(back?.coverLetter ?? false);
   const [confirmed, setConfirmed] = useState(back !== null);
   const [touched, setTouched] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const pkg = choice === "" ? null : getPackage(choice);
-  const isValid = name.trim() !== "" && role.trim() !== "" && location !== "" && pkg !== null && confirmed;
+  const aboutDone = name.trim() !== "" && role.trim() !== "" && location !== "";
+
+  // Each step change brings the top of the card back on screen, since the
+  // button that moved them on sits at the bottom of a tall form on phones.
+  const goTo = (next: 1 | 2) => {
+    setTouched(false);
+    setStep(next);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     setTouched(true);
-    if (!isValid || !pkg) return;
+    if (step === 1) {
+      if (aboutDone) goTo(2);
+      return;
+    }
+    if (!aboutDone || !pkg || !confirmed) return;
     router.push(`/writing/deposit?${answersQuery({ name: name.trim(), role: role.trim(), location, choice: pkg.key, coverLetter })}`);
   };
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
       data-testid="writing-form"
-      className="space-y-6 rounded-[2rem] bg-gold p-6 text-left shadow-[0_40px_120px_-30px_rgba(244,203,25,0.45)] ring-1 ring-gold-400 sm:p-9"
+      className="scroll-mt-24 space-y-6 rounded-[2rem] bg-gold p-6 text-left shadow-[0_40px_120px_-30px_rgba(244,203,25,0.45)] ring-1 ring-gold-400 sm:p-9"
     >
       <div>
-        <label htmlFor="w-name" className={fieldLabel}>
-          Your name
-        </label>
-        <input
-          id="w-name"
-          data-testid="w-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Amaka Obi"
-          autoComplete="name"
-          className={textInput}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="w-role" className={fieldLabel}>
-          What job are you going for?
-        </label>
-        <input
-          id="w-role"
-          data-testid="w-role"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          placeholder="e.g. Customer service, data analyst, admin officer"
-          className={textInput}
-        />
-      </div>
-
-      <fieldset>
-        <legend className={fieldLabel}>Where do you want to work?</legend>
-        <div className="grid gap-2 sm:grid-cols-3">
-          {LOCATION_OPTIONS.map((option) => (
-            <label key={option} className={`${optionBase} ${location === option ? optionOn : optionOff}`}>
-              <input
-                type="radio"
-                name="location"
-                checked={location === option}
-                onChange={() => setLocation(option)}
-                className="mr-2 accent-ink-900"
-              />
-              {option}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <div>
-        <label htmlFor="w-package" className={fieldLabel}>
-          How many years have you worked?
-        </label>
-        <Select id="w-package" value={choice} onChange={(v) => setChoice(v as PackageKey)}>
-          {PACKAGES.map((p) => (
-            <option key={p.key} value={p.key}>
-              {p.years} ({p.name}, {formatNaira(p.price)})
-            </option>
-          ))}
-        </Select>
-      </div>
-
-      {pkg && (
-        <div data-testid="w-price" className="rounded-xl bg-white p-4 text-sm text-ink-900">
-          <label data-testid="w-cover" className="flex cursor-pointer items-start font-semibold">
-            <input
-              type="checkbox"
-              checked={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.checked)}
-              className="mr-2.5 mt-0.5 h-4 w-4 shrink-0 accent-ink-900"
-            />
-            Add a cover letter for {formatNaira(pkg.coverLetter)} more
-          </label>
-          <p className="mt-3 border-t border-ink-900/10 pt-3 font-display text-[15px] font-semibold tracking-[-0.02em]">
-            Your total: {formatNaira(orderTotal(pkg.key, coverLetter))}
-          </p>
-          <p className="mt-1 leading-relaxed text-ink-600">
-            You start with a {formatNaira(pkg.deposit)} deposit by bank transfer. It comes off your total, so you
-            pay {formatNaira(orderTotal(pkg.key, coverLetter) - pkg.deposit)} after.
-          </p>
-          <label data-testid="w-confirm" className="mt-3 flex cursor-pointer items-start font-semibold">
-            <input
-              type="checkbox"
-              checked={confirmed}
-              onChange={(e) => setConfirmed(e.target.checked)}
-              className="mr-2.5 mt-0.5 h-4 w-4 shrink-0 accent-ink-900"
-            />
-            {priceConfirmation(pkg.key, coverLetter)}
-          </label>
-        </div>
-      )}
-
-      {touched && !isValid && (
-        <p className={errorNote}>Please answer all four questions and tick the price box so our team knows how to help.</p>
-      )}
-
-      <div>
-        <button type="submit" data-testid="w-submit" className={submitButton}>
-          Continue to deposit
-        </button>
-        <p className="mt-3 text-center text-xs font-medium text-ink-900/80">
-          Next, you&apos;ll see where to send your deposit.
+        <p data-testid="w-step" className="font-mono text-[12px] font-semibold uppercase tracking-[0.18em] text-ink-900/70">
+          Step {step} of 3: {step === 1 ? "About you" : "Your CV"}
         </p>
+        <div aria-hidden className="mt-3 grid grid-cols-3 gap-1.5">
+          {[1, 2, 3].map((n) => (
+            <span key={n} className={`h-1.5 rounded-full ${n <= step ? "bg-ink-900" : "bg-ink-900/15"}`} />
+          ))}
+        </div>
       </div>
+
+      {step === 1 ? (
+        <>
+          <div>
+            <label htmlFor="w-name" className={fieldLabel}>
+              Your name
+            </label>
+            <input
+              id="w-name"
+              data-testid="w-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Amaka Obi"
+              autoComplete="name"
+              className={textInput}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="w-role" className={fieldLabel}>
+              What job are you going for?
+            </label>
+            <input
+              id="w-role"
+              data-testid="w-role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              placeholder="e.g. Customer service, data analyst, admin officer"
+              className={textInput}
+            />
+          </div>
+
+          <fieldset>
+            <legend className={fieldLabel}>Where do you want to work?</legend>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {LOCATION_OPTIONS.map((option) => (
+                <label key={option} className={`${optionBase} ${location === option ? optionOn : optionOff}`}>
+                  <input
+                    type="radio"
+                    name="location"
+                    checked={location === option}
+                    onChange={() => setLocation(option)}
+                    className="mr-2 accent-ink-900"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          {touched && !aboutDone && (
+            <p className={errorNote}>Please answer all three questions so our team knows how to help.</p>
+          )}
+
+          <button type="submit" data-testid="w-next" className={submitButton}>
+            Next
+          </button>
+        </>
+      ) : (
+        <>
+          <div>
+            <label htmlFor="w-package" className={fieldLabel}>
+              How many years have you worked?
+            </label>
+            <Select id="w-package" value={choice} onChange={(v) => setChoice(v as PackageKey)}>
+              {PACKAGES.map((p) => (
+                <option key={p.key} value={p.key}>
+                  {p.years}, {formatNaira(p.price)}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          {pkg && (
+            <div data-testid="w-price" className="rounded-xl bg-white p-4 text-sm text-ink-900">
+              <label data-testid="w-cover" className="flex cursor-pointer items-start font-semibold">
+                <input
+                  type="checkbox"
+                  checked={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.checked)}
+                  className="mr-2.5 mt-0.5 h-4 w-4 shrink-0 accent-ink-900"
+                />
+                Add a cover letter for {formatNaira(pkg.coverLetter)} more
+              </label>
+              <p className="mt-3 border-t border-ink-900/10 pt-3 font-display text-[15px] font-semibold tracking-[-0.02em]">
+                Your total: {formatNaira(orderTotal(pkg.key, coverLetter))}
+              </p>
+              <p className="mt-1 leading-relaxed text-ink-600">
+                You start with a {formatNaira(pkg.deposit)} deposit by bank transfer. It comes off your total, so you
+                pay {formatNaira(orderTotal(pkg.key, coverLetter) - pkg.deposit)} after.
+              </p>
+              <label data-testid="w-confirm" className="mt-3 flex cursor-pointer items-start font-semibold">
+                <input
+                  type="checkbox"
+                  checked={confirmed}
+                  onChange={(e) => setConfirmed(e.target.checked)}
+                  className="mr-2.5 mt-0.5 h-4 w-4 shrink-0 accent-ink-900"
+                />
+                {priceConfirmation(pkg.key, coverLetter)}
+              </label>
+            </div>
+          )}
+
+          {touched && (!pkg || !confirmed) && (
+            <p className={errorNote}>Please pick how many years you&apos;ve worked and tick the price box.</p>
+          )}
+
+          <div>
+            <button type="submit" data-testid="w-submit" className={submitButton}>
+              Continue to deposit
+            </button>
+            <p className="mt-3 text-center text-xs font-medium text-ink-900/80">
+              Next, you&apos;ll see where to send your deposit.
+            </p>
+            <button
+              type="button"
+              data-testid="w-back"
+              onClick={() => goTo(1)}
+              className="mx-auto mt-4 block text-sm font-semibold text-ink-900/80 underline-offset-4 hover:text-ink-900 hover:underline"
+            >
+              Back to step 1
+            </button>
+          </div>
+        </>
+      )}
     </form>
   );
 }

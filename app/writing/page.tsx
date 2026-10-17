@@ -387,9 +387,7 @@ export default function WritingPage() {
             </p>
             <div className="animate-fade-in mt-9 flex flex-col items-center gap-3 opacity-0 [animation-delay:850ms]">
               <ApplyButton label="Get my CV rewritten" />
-              <p className="text-sm text-white/70">
-                From {formatNaira(PACKAGES[0].price)}. The price depends on how long you&apos;ve worked. Ready in 24 to 48 hours.
-              </p>
+              <p className="text-sm text-white/70">Ready in 24 to 48 hours.</p>
             </div>
             <div className="animate-fade-up mx-auto mt-14 max-w-[340px] opacity-0 [animation-delay:1000ms]">
               <div className="rounded-[2.2rem] bg-black p-2.5 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/15">
@@ -413,37 +411,34 @@ export default function WritingPage() {
         <Section>
           <div className="mx-auto max-w-[640px]">
             <p data-reveal className="font-display text-2xl font-semibold tracking-[-0.03em] text-ink-900">
-              Dear Jobseeker,
+              Dear Professional,
             </p>
           </div>
           <Prose
             className="mt-6"
             lines={[
-              "It's 11:30 PM. You're staring at your phone, checking your inbox for the twentieth time today, hoping this time will be different. But there's nothing there.",
-              "You've done everything \"they\" told you to do. You got the qualification, and you sharpened your skills.",
-              "You spent hours on your CV, making sure every line looked perfect, and you sent it out with a prayer.",
-              "You've updated it 6 times this month and changed it for every single job. You hit \"Submit\", and then there's total silence.",
+              "It's 11:30 PM. You've just come back from work, and you're too tired to sleep.",
+              "You're good at your job. Your manager knows it, and some days they hand you the work nobody else can do.",
+              "But your pay hasn't moved much. Prices go up every month, and what you take home stays the same.",
+              "So you pick up your phone and look for something better. A bigger role, a better company, or a remote job that pays in dollars.",
+              "You find one that fits you well. You send your CV, and then there's total silence.",
               "No email comes. No rejection letter comes either. It's like your CV fell into a black hole.",
-              "The only messages you do get are from people who want you to pay for a \"job slot\", and you know those are scams.",
-              "And the money you spend on data, transport and printing keeps adding up, with nothing coming back.",
+              "And tomorrow morning, you'll be back at the same desk, doing the same work for the same pay.",
             ]}
           />
-          <Photo src="/writing/cv-girl1.jpeg" alt="A job seeker looking at her phone late at night" w={612} h={408} />
-          <H2>How much longer can you keep playing this guessing game?</H2>
+          <Photo src="/writing/cv-girl2.jpg" alt="A woman looking at her phone in a dark room late at night" w={612} h={323} />
+          <H2>How much longer can you keep waiting for your turn?</H2>
           <Prose
             className="mt-10"
             lines={[
-              "You hit \"Apply\" on LinkedIn, Jobberman, Indeed, or by email. Then you wait in silence, wondering if anyone even opened it.",
-              "And on the rare day you get a callback, it can hurt even more.",
-              "You prepare for days and nail the interview. You walk out feeling like \"this is finally the one.\" Then you never hear from the HR manager again, not even a short email.",
-              "Meanwhile, you see classmates and friends posting their new jobs on LinkedIn.",
-              "You're truly happy for them. But a quiet voice inside you asks, \"What am I doing wrong? When is it my turn?\"",
-              "And every time someone at home asks, \"Any news about the job?\", it gets harder to answer.",
-              "It's not that you're lazy. You're giving this everything you've got. But being rejected again and again, or worse, being ignored, is tiring for your body and your mind.",
-              "**It makes you feel small. It makes you question your worth, your talent, and your future.**",
+              "You watch people you started with move on. One is now a manager at another company. Another got a remote job and now earns in dollars.",
+              "You're truly happy for them. But a quiet voice inside you asks, \"What do they have that I don't?\"",
+              "And when a recruiter does call, it's often for a role at your level, for about the same money. So you stay where you are.",
+              "It's not that you're lazy. You show up and do good work every day. But being passed over again and again, or worse, being ignored, wears you down.",
+              "**It makes you wonder if this is as far as you'll go. It makes you question your worth, your talent, and your future.**",
             ]}
           />
-          <Photo src="/writing/cv-girl2.jpg" alt="A tired job seeker at her desk" w={612} h={323} />
+          <Photo src="/writing/cv-girl1.jpeg" alt="A woman holding her head as she looks at her phone" w={612} h={408} />
         </Section>
 
         {/* Problem mechanism */}
@@ -587,14 +582,14 @@ export default function WritingPage() {
 
         {/* Future pacing + remote proof */}
         <Section>
-          <H2>Imagine how your life changes when you finally land that job</H2>
+          <H2>Imagine how your life changes when you finally make that move</H2>
           <Prose
             className="mt-10"
             lines={[
-              "We understand exactly how it feels to apply again and again with no response, to feel stuck while others move ahead, and to get ghosted after an interview.",
+              "We understand how it feels to do good work every day and still feel stuck, to apply for better roles and hear nothing back, and to watch others move ahead.",
               "Now imagine your phone buzzing with an email that starts, \"We'd like to invite you for an interview.\" A few days later, another one comes in.",
-              "Then you land the dream job you've been praying to God for.",
-              "You call your mum and tell her the news, and this time you're the one helping at home. You can hang out with your friends again, and finally start saving for that dream car.",
+              "Then the offer comes. A bigger role, at a better company, for a lot more than you earn now.",
+              "You hand in your resignation letter, and it feels good. You can do more for your family, put real money aside every month, and finally start saving for that dream car.",
               "And you can look in the mirror and know you did it.",
               "**You didn't get lucky. You stopped playing a broken game and started playing a smarter one.**",
               "And it isn't only jobs in Nigeria.",

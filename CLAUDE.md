@@ -139,7 +139,8 @@ list further down the same page.
 **`/writing` is a separate long-form sales page** (`app/writing/page.tsx`, client pieces in
 `components/writing/`), rebuilt from jobmingle.co/careerservice. There are no checkout links:
 package buttons only preselect the package in the form at the bottom (`PackageContext`). The form
-is two steps: `WritingForm.tsx` (details plus a required "ready to pay now" price tick box), then
+is three steps: `WritingForm.tsx` holds steps 1 (name, job, where) and 2 (years of experience,
+cover letter, a required "ready to pay now" price tick box), and step 3 is
 its own page, `/writing/deposit` (`DepositCard.tsx`), showing the company bank accounts
 (`BANK_ACCOUNTS`, each package's `deposit`, which comes off the price). The answers travel between
 the two in the query string (`answersQuery`/`parseAnswers`), so a refresh or "change my answers"
