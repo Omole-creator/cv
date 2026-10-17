@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, ReactNode, useRef, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import {
@@ -81,6 +81,13 @@ export default function WritingForm() {
   const [step, setStep] = useState<1 | 2>(1);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Links into the form (/writing#apply) make the browser stop at the top
+  // of the section, above the receipts. Once the form has loaded, move on
+  // down to the card itself.
+  useEffect(() => {
+    if (window.location.hash === "#apply") formRef.current?.scrollIntoView({ block: "start" });
+  }, []);
+
   const pkg = choice === "" ? null : getPackage(choice);
   const aboutDone = name.trim() !== "" && role.trim() !== "" && location !== "";
 
@@ -105,6 +112,7 @@ export default function WritingForm() {
 
   return (
     <form
+      id="apply-form"
       ref={formRef}
       onSubmit={handleSubmit}
       data-testid="writing-form"

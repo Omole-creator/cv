@@ -15,6 +15,8 @@ test("choosing a package preselects it in the form and sends the lead to WhatsAp
   await expect(page.locator("a[href*='paystack']")).toHaveCount(0);
 
   await page.getByTestId("choose-mid").click();
+  // The button lands on the form card, not the receipts above it.
+  await expect(page.getByTestId("w-name")).toBeInViewport();
   await expect(page.getByTestId("w-step")).toContainText("Step 1 of 3");
 
   // Step 1 won't move on until all three questions are answered.
@@ -79,6 +81,7 @@ test("change my answers on the deposit page refills the form", async ({ page }) 
   await expect(page.getByTestId("deposit-summary")).toContainText("₦25,000");
   await page.getByText("Change my answers").click();
   await expect(page.getByTestId("w-name")).toHaveValue("Amaka Obi");
+  await expect(page.getByTestId("w-name")).toBeInViewport();
   await page.getByTestId("w-next").click();
   await expect(page.getByTestId("w-package")).toHaveValue("senior");
 });

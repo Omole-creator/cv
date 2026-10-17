@@ -24,8 +24,12 @@ export function usePackage() {
   return ctx;
 }
 
+// Lands on the form card itself, not the top of its section, which would
+// stop on the heading and receipts above it. Falls back to the section
+// while the form is still loading.
 export function scrollToApply() {
-  document.getElementById("apply")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const target = document.getElementById("apply-form") ?? document.getElementById("apply");
+  target?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // Package card buttons don't take payment. They preselect the package in
