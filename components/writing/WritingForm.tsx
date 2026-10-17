@@ -8,6 +8,7 @@ import {
   formatNaira,
   getPackage,
   LOCATION_OPTIONS,
+  orderTotal,
   PackageKey,
   PACKAGES,
   parseAnswers,
@@ -73,6 +74,7 @@ export default function WritingForm() {
   const [name, setName] = useState(back?.name ?? "");
   const [role, setRole] = useState(back?.role ?? "");
   const [location, setLocation] = useState(back?.location ?? "");
+  const [coverLetter, setCoverLetter] = useState(back?.coverLetter ?? false);
   const [confirmed, setConfirmed] = useState(back !== null);
   const [touched, setTouched] = useState(false);
 
@@ -83,7 +85,7 @@ export default function WritingForm() {
     event.preventDefault();
     setTouched(true);
     if (!isValid || !pkg) return;
-    router.push(`/writing/deposit?${answersQuery({ name: name.trim(), role: role.trim(), location, choice: pkg.key })}`);
+    router.push(`/writing/deposit?${answersQuery({ name: name.trim(), role: role.trim(), location, choice: pkg.key, coverLetter })}`);
   };
 
   return (
@@ -141,12 +143,12 @@ export default function WritingForm() {
 
       <div>
         <label htmlFor="w-package" className={fieldLabel}>
-          What do you want us to do for you?
+          How many years have you worked?
         </label>
         <Select id="w-package" value={choice} onChange={(v) => setChoice(v as PackageKey)}>
           {PACKAGES.map((p) => (
             <option key={p.key} value={p.key}>
-              {p.service}
+              {p.years} ({p.name}, {formatNaira(p.price)})
             </option>
           ))}
         </Select>
@@ -154,12 +156,21 @@ export default function WritingForm() {
 
       {pkg && (
         <div data-testid="w-price" className="rounded-xl bg-white p-4 text-sm text-ink-900">
-          <p className="font-display text-[15px] font-semibold tracking-[-0.02em]">
-            Your package: {pkg.name}, {formatNaira(pkg.price)}
+          <label data-testid="w-cover" className="flex cursor-pointer items-start font-semibold">
+            <input
+              type="checkbox"
+              checked={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.checked)}
+              className="mr-2.5 mt-0.5 h-4 w-4 shrink-0 accent-ink-900"
+            />
+            Add a cover letter for {formatNaira(pkg.coverLetter)} more
+          </label>
+          <p className="mt-3 border-t border-ink-900/10 pt-3 font-display text-[15px] font-semibold tracking-[-0.02em]">
+            Your total: {formatNaira(orderTotal(pkg.key, coverLetter))}
           </p>
           <p className="mt-1 leading-relaxed text-ink-600">
             You start with a {formatNaira(pkg.deposit)} deposit by bank transfer. It comes off your total, so you
-            pay {formatNaira(pkg.price - pkg.deposit)} after.
+            pay {formatNaira(orderTotal(pkg.key, coverLetter) - pkg.deposit)} after.
           </p>
           <label data-testid="w-confirm" className="mt-3 flex cursor-pointer items-start font-semibold">
             <input
@@ -168,7 +179,7 @@ export default function WritingForm() {
               onChange={(e) => setConfirmed(e.target.checked)}
               className="mr-2.5 mt-0.5 h-4 w-4 shrink-0 accent-ink-900"
             />
-            {priceConfirmation(pkg.key)}
+            {priceConfirmation(pkg.key, coverLetter)}
           </label>
         </div>
       )}

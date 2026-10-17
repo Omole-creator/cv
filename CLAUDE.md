@@ -153,10 +153,14 @@ purpose, so they live in `writingPackages.ts`, never in `pricing.ts`. Proof scre
 new ones. Client payment receipts in `public/writing/receipts/` (the `ReceiptMarquee`
 above the form) are cropped to the receipt card, keeping only the sender's first name and blurring the rest of the
 name and the last 4 digits of their phone/account number; the raw chat screenshots
-they came from show full phone numbers and must never be committed. Each pricing card strikes through `totalValue()` (price + every bonus value, including
-lower tiers, unless the package sets `countLowerBonuses: false`, as Premium does) to reveal the real price.
+they came from show full phone numbers and must never be committed. The offer is a CV only,
+priced by years of experience (four `PACKAGES` tiers), with a cover letter as an optional add-on
+ticked in the form; `orderTotal()` is the one place the total is worked out. The old
+Basic/Standard/Premium bundles (LinkedIn, portfolio, bonus stacks with struck-through values) were
+dropped on purpose; don't bring back bonus value stacks or "prices go back to" lines. The hero
+is aimed at people who already work and want a better-paying or dollar-paying role, not the unemployed.
 The hero headline is Geist in a stacked-scale layout (small, medium, one huge gold line,
-medium); body subheads use the `font-helvetica` stack. Bonus values in `writingPackages.ts` are placeholders.
+medium); body subheads use the `font-helvetica` stack.
 Motion on `/writing` (scroll reveals, the gold highlighter sweep, hero chat) is CSS in
 `globals.css` under `.w-*` / `html.fx`, driven by one observer in `components/writing/ScrollFx.tsx`;
 an inline script sets `html.fx` so nothing is hidden if JS fails. Videos play inline via

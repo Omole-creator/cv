@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
-import { Check, Gift, Quote as QuoteIcon, ShieldCheck } from "lucide-react";
+import { Check, Quote as QuoteIcon, ShieldCheck } from "lucide-react";
 import {
   ApplyButton,
   ChoosePackageButton,
@@ -13,19 +13,13 @@ import StickyCta from "@/components/writing/StickyCta";
 import ScrollFx from "@/components/writing/ScrollFx";
 import SiteNav from "@/components/writing/SiteNav";
 import YouTubeLite from "@/components/writing/YouTubeLite";
-import BeforeAfter from "@/components/writing/BeforeAfter";
 import ReceiptMarquee from "@/components/writing/ReceiptMarquee";
-import {
-  formatNaira,
-  PACKAGES,
-  totalBonusValue,
-  totalValue,
-} from "@/lib/writingPackages";
+import { formatNaira, PACKAGE_WORK, PACKAGES } from "@/lib/writingPackages";
 
 export const metadata: Metadata = {
-  title: "CV Writing That Gets Replies | JobMingle",
+  title: "A CV That Shows What You're Worth | JobMingle",
   description:
-    "Ayomide sent CVs for 5 months and heard nothing. Less than a week after we rewrote hers, 5 companies replied. Get your CV rewritten in 24 to 48 hours.",
+    "Already working and want a better-paying role, or a remote job that pays in dollars? We rewrite your CV to show your results, not just your duties. From ₦10,000, ready in 24 to 48 hours.",
 };
 
 /* ------------------------------------------------------------------ */
@@ -291,14 +285,6 @@ const MISTAKES = [
     "Applying for jobs that don't fit you.",
     "Every hour you spend on a role you were never going to get is an hour you didn't spend on one you could.",
   ],
-  [
-    "Having a LinkedIn profile recruiters can't find.",
-    "Recruiters in Nigeria and abroad search LinkedIn for people like you every day. If your profile isn't set up right, you don't show up.",
-  ],
-  [
-    "Having no proof of your work.",
-    "Without something that shows what you do, how you do it, and who you've done it for, a recruiter has to take your word for it, and many won't.",
-  ],
 ];
 
 const STEPS = [
@@ -308,7 +294,7 @@ const STEPS = [
   ],
   [
     "Pay a small deposit to our company account.",
-    "It's ₦3,000 for Basic or ₦5,000 for Standard and Premium, and it comes off your total.",
+    "It's ₦3,000, or ₦5,000 if you've worked 8 years or more, and it comes off your total.",
   ],
   [
     "Press the button and WhatsApp opens with your answers already typed.",
@@ -316,18 +302,18 @@ const STEPS = [
   ],
   [
     "We send for your details or work from your old CV, then we get to work.",
-    "Basic is ready in 24 to 48 hours. Standard takes 4 to 6 days, and Premium takes 7 to 10 days.",
+    "Your CV, and your cover letter if you asked for one, is ready in 24 to 48 hours.",
   ],
 ];
 
 const FAQS = [
   [
     "Do I have to pay anything to fill the form?",
-    "The form is free. To start, you pay a small deposit by bank transfer: ₦3,000 for Basic, ₦5,000 for Standard or Premium. It comes off your total fee, so it doesn't cost you anything extra.",
+    "The form is free. To start, you pay a small deposit by bank transfer: ₦3,000, or ₦5,000 if you've worked 8 years or more. It comes off your total fee, so it doesn't cost you anything extra.",
   ],
   [
     "How do I know this isn't a scam?",
-    "We will never ask you to pay for a job or a \"job slot\". We're not a recruiter. You pay for a CV, a LinkedIn profile or a portfolio, into our company account in the name JobMingle Limited, never a personal account. Our clients' stories, with their names and faces, are all over this page.",
+    "We will never ask you to pay for a job or a \"job slot\". We're not a recruiter. You pay for a CV or a cover letter, into our company account in the name JobMingle Limited, never a personal account. Our clients' stories, with their names and faces, are all over this page.",
   ],
   [
     "Will you just add big grammar to my CV?",
@@ -338,8 +324,8 @@ const FAQS = [
     "We can't change your grade, and we won't make anything up. What we do is find the results already in your work history and put them where a recruiter will see them. Most people have done more than their CV shows.",
   ],
   [
-    "A good CV won't help if I fail the interview, right?",
-    "That's true. A CV gets you the interview, not the job. That's why Premium includes interview practice questions and salary negotiation scripts.",
+    "Why does the price change with my experience?",
+    "A CV for someone with 2 years of work is shorter and quicker to get right. With 10 or 15 years, there's a lot more to go through, and picking what to leave out takes time. So you only pay for the work your CV needs.",
   ],
   [
     "I'm a fresh graduate, or I don't have a CV yet. Can you still help?",
@@ -347,34 +333,16 @@ const FAQS = [
   ],
   [
     "Will this work for remote jobs abroad?",
-    "Yes. Companies abroad use the same kind of screening software, and we write for that. Standard and Premium also include tools for reaching recruiters outside Nigeria.",
+    "Yes. Companies abroad use the same kind of screening software, and we write for that.",
   ],
   [
     "What if I don't like what you write?",
-    "Tell us what to change. Every CV, LinkedIn profile and portfolio comes with unlimited revisions until you're happy with it.",
+    "Tell us what to change. Every CV and cover letter comes with unlimited revisions until you're happy with it.",
   ],
   [
     "How do I pay when I'm ready?",
-    "Our team sends you the payment link or our bank details on WhatsApp once you've chosen your package.",
+    "After the form, you'll see our company bank accounts and pay your deposit there. Our team sends the details for the rest on WhatsApp.",
   ],
-];
-
-const LINKEDIN = [
-  {
-    name: "Victor Morolayo",
-    place: "Oyo State",
-    quote:
-      "This optimization has given me more confidence in how I present myself professionally, and I'm grateful for the work you guys put into making it stand out.",
-    before: { src: "/writing/victor-before.jpg", w: 1000, h: 435 },
-    after: { src: "/writing/victor-after.jpg", w: 1000, h: 515 },
-  },
-  {
-    name: "Temiloluwa Makinde",
-    place: "Lagos State",
-    quote: "Good job. What I was most inspired about was the post as well.",
-    before: { src: "/writing/temi-before.jpg", w: 1000, h: 729 },
-    after: { src: "/writing/temi-after.jpg", w: 1000, h: 634 },
-  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -400,40 +368,43 @@ export default function WritingPage() {
             {/* Stacked scale: small lead-in, one huge phrase, medium close. */}
             <h1 className="font-display leading-[1.05] tracking-[-0.05em] text-white">
               <span className="animate-fade-in block text-2xl font-normal text-white/80 opacity-0 [animation-delay:100ms] sm:text-3xl">
-                Ayomide Applied For 5 Months and Heard Nothing.
+                You&apos;re Good at Your Job. Your CV Doesn&apos;t Show It.
               </span>
               <span className="animate-fade-in mt-3 block text-3xl font-semibold text-white opacity-0 [animation-delay:250ms] sm:text-4xl lg:text-5xl">
-                Then We Changed How Her CV Sold Her, and
+                We Rewrite It So Recruiters in Nigeria and Abroad See
               </span>
               <span className="animate-fade-in mt-2 block text-[2.9rem] font-semibold leading-[0.95] text-gold opacity-0 [animation-delay:400ms] sm:text-[4.75rem] lg:text-[5.75rem]">
-                5 Companies Replied
+                What You&apos;re Worth
               </span>
               <span className="animate-fade-in mt-2 block text-3xl font-semibold text-white/90 opacity-0 [animation-delay:550ms] sm:text-4xl lg:text-5xl">
-                in Less Than a Week.
+                in the First 7 Seconds.
               </span>
             </h1>
             <p className="animate-fade-in mx-auto mt-8 max-w-2xl text-[17px] leading-[1.7] text-white/80 opacity-0 [animation-delay:700ms] sm:text-lg">
-              A few days later, she had a job offer. Below, you&apos;ll see the most common mistake we
-              fix in CVs like hers, why yours is probably making it too, and how we can fix yours in as
-              little as 24 hours.
+              This is for you if you have a job but want one that pays more, or a remote job that pays
+              in dollars. Most CVs only list what you were asked to do. We rewrite yours to show what you
+              actually got done, so the people hiring can see why you&apos;re worth more.
             </p>
             <div className="animate-fade-in mt-9 flex flex-col items-center gap-3 opacity-0 [animation-delay:850ms]">
-              <ApplyButton label="Yes, I want more interview invites" />
+              <ApplyButton label="Get my CV rewritten" />
               <p className="text-sm text-white/70">
-                It&apos;s a 1-minute form, and you don&apos;t pay anything to fill it.
+                From {formatNaira(PACKAGES[0].price)}. The price depends on how long you&apos;ve worked. Ready in 24 to 48 hours.
               </p>
             </div>
-            <div className="animate-fade-up mx-auto mt-14 max-w-[320px] opacity-0 [animation-delay:1000ms]">
+            <div className="animate-fade-up mx-auto mt-14 max-w-[340px] opacity-0 [animation-delay:1000ms]">
               <div className="rounded-[2.2rem] bg-black p-2.5 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/15">
                 <Image
-                  src="/writing/ayomide-replies.jpg"
-                  alt="Ayomide's WhatsApp message saying she got replies from 5 companies in less than a week, followed by an offer of employment"
-                  width={485}
-                  height={865}
+                  src="/writing/client-underselling.jpg"
+                  alt="Victoria Harry's WhatsApp message saying the new CV showed she had been underselling herself, and that she is now getting callbacks and has an interview with a hospital in Lagos"
+                  width={700}
+                  height={1102}
                   priority
                   className="w-full rounded-[1.7rem]"
                 />
               </div>
+              <p className="mt-5 text-center font-mono text-[12px] uppercase leading-relaxed tracking-wider text-white/70">
+                Victoria Harry: &ldquo;I had been underselling myself.&rdquo;
+              </p>
             </div>
           </div>
         </section>
@@ -577,12 +548,12 @@ export default function WritingPage() {
         {/* 5 mistakes */}
         <Section tone="ink">
           <div aria-hidden className="w-grid-bg absolute inset-0 opacity-60" />
-          <H2 dark>The 5 costly mistakes that keep good people stuck</H2>
+          <H2 dark>The 3 costly mistakes that keep good people stuck</H2>
           <Prose
             dark
             className="mt-10"
             lines={[
-              "You see, if you want more interview invites and a move into a better-paying role, you have to avoid these 5 costly mistakes.",
+              "You see, if you want more interview invites and a move into a better-paying role, you have to avoid these 3 costly mistakes.",
             ]}
           />
           <ol className="mx-auto mt-14 max-w-3xl divide-y divide-white/10 border-y border-white/10">
@@ -609,7 +580,7 @@ export default function WritingPage() {
             dark
             className="mt-12"
             lines={[
-              "We fix the first two for every client. Standard and Premium fix the last two as well, and you'll see how below.",
+              "We fix all three for every client. Your CV is written for the exact job you're going for, in a layout the software can read, with your results right at the top.",
             ]}
           />
         </Section>
@@ -642,9 +613,9 @@ export default function WritingPage() {
               "Some got there through our CV and LinkedIn services, others through our job tips, and some through their own improved approach.",
               "Now you might be wondering, \"How much does it cost if I don't want to do this myself?\"",
               "We'll get to that in a moment. But first, here's what you need to know.",
-              "It doesn't matter your experience level, your industry, or how long you've been job hunting. We work from your old CV, or we collect your details with a short form, and turn them into a CV and cover letter that stand out.",
-              "**And the best part? You can get started for a one-time payment of just ₦20,000.**",
-              "We know ₦20,000 is real money right now. So think about it this way. If your next job pays ₦150,000 a month, that's about 4 days of your new salary. And every month you keep sending a CV that undersells you, you're paying for data and transport that bring nothing back.",
+              "It doesn't matter your experience level, your industry, or how long you've been job hunting. We work from your old CV, or we collect your details with a short form, and turn them into a CV that stands out, with a cover letter if you want one.",
+              "**And the best part? You can get started for a one-time payment of just ₦10,000.**",
+              "The price depends on how many years you've worked, and we know it's still real money. So think about it this way. If your next job pays ₦150,000 a month, ₦10,000 is about 2 days of your new salary. And every month you keep sending a CV that undersells you, you're paying for data and transport that bring nothing back.",
             ]}
           />
         </Section>
@@ -656,17 +627,17 @@ export default function WritingPage() {
             aria-hidden
             className="absolute left-1/2 top-1/2 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/[0.07] blur-[140px]"
           />
-          <H2 dark>Here is everything you get</H2>
+          <H2 dark>Pick your experience level</H2>
           <Prose
             dark
             className="mt-10"
             lines={[
               "Whether you want a role here in Nigeria or a remote job that pays in dollars, your problem is the same. You are good enough, but the people who decide can't see it fast enough.",
-              "We fix that in days. And we don't hand you documents and wave goodbye. We hand you the whole system that turns those documents into interviews.",
-              "**Choose a package, and here's what lands in your hands. You don't pay on this page. Choosing one just fills in your form at the bottom.**",
+              "We fix that in 24 to 48 hours. Everyone gets the same care. The price only changes with how many years of work we have to go through.",
+              "**Pick the one that matches your years of experience. You don't pay on this page. Choosing one just fills in your form at the bottom.**",
             ]}
           />
-          <div className="mx-auto mt-16 grid max-w-6xl items-stretch gap-6 lg:grid-cols-3">
+          <div className="mx-auto mt-16 grid max-w-6xl items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PACKAGES.map((pkg, i) => (
               <div
                 key={pkg.key}
@@ -674,11 +645,11 @@ export default function WritingPage() {
                 style={delay(i * 120)}
                 className={`relative rounded-[2rem] p-px ${
                   pkg.popular
-                    ? "bg-gradient-to-b from-gold via-gold/40 to-gold/10 shadow-[0_0_80px_-20px_rgba(244,203,25,0.45)] lg:-my-4"
+                    ? "bg-gradient-to-b from-gold via-gold/40 to-gold/10 shadow-[0_0_80px_-20px_rgba(244,203,25,0.45)]"
                     : "bg-white/10"
                 }`}
               >
-                <article className="flex h-full flex-col rounded-[calc(2rem-1px)] bg-[#0B1433] p-7 sm:p-8">
+                <article className="flex h-full flex-col rounded-[calc(2rem-1px)] bg-[#0B1433] p-7">
                   <div className="flex items-center justify-between">
                     <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/75">{pkg.name}</p>
                     {pkg.popular && (
@@ -687,30 +658,26 @@ export default function WritingPage() {
                       </span>
                     )}
                   </div>
-                  <h3 className="mt-3 font-display text-2xl font-semibold tracking-[-0.04em] text-white">{pkg.system}</h3>
+                  <h3 className="mt-3 font-display text-2xl font-semibold tracking-[-0.04em] text-white">
+                    {pkg.years} of experience
+                  </h3>
 
                   <div className="mt-7 rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/[0.06]">
-                    <p className="flex items-baseline justify-between font-mono text-[12px] uppercase tracking-wider text-white/70">
-                      <span>Total value</span>
-                      <span className="text-[15px] normal-case tracking-normal line-through decoration-gold/70 decoration-2">
-                        {formatNaira(totalValue(pkg))}
-                      </span>
+                    <p className="font-mono text-[12px] uppercase tracking-wider text-gold">Your CV</p>
+                    <p className="mt-1.5 font-display text-[2.5rem] font-semibold leading-none tracking-[-0.05em] text-white">
+                      {formatNaira(pkg.price)}
                     </p>
-                    <div className="mt-4 border-t border-white/[0.06] pt-4">
-                      <p className="font-mono text-[12px] uppercase tracking-wider text-gold">Your price</p>
-                      <p className="mt-1.5 font-display text-[2.75rem] font-semibold leading-none tracking-[-0.05em] text-white">
-                        {formatNaira(pkg.price)}
-                      </p>
-                    </div>
+                    <p className="mt-4 border-t border-white/[0.06] pt-4 text-[14px] text-white/80">
+                      Add a cover letter for <span className="font-semibold text-white">{formatNaira(pkg.coverLetter)}</span>
+                    </p>
                   </div>
                   <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-wider text-white/70">
                     Ready in {pkg.delivery}
                   </p>
 
-                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">What we do for you</p>
-                  <ul className="mt-4 space-y-3">
-                    {pkg.work.map((item) => (
-                      <li key={item} className="flex gap-3 text-[15px] leading-snug text-white/85">
+                  <ul className="mb-8 mt-8 space-y-3">
+                    {PACKAGE_WORK.map((item) => (
+                      <li key={item} className="flex gap-3 text-[14px] leading-snug text-white/85">
                         <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold/15">
                           <Check className="h-3 w-3 text-gold" strokeWidth={3} />
                         </span>
@@ -719,27 +686,8 @@ export default function WritingPage() {
                     ))}
                   </ul>
 
-                  <p className="mt-8 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">
-                    <span>Free bonuses</span>
-                    <span className="text-gold/80">{formatNaira(totalBonusValue(pkg.key))}</span>
-                  </p>
-                  <ul className="mb-8 mt-4 space-y-3.5">
-                    {pkg.bonuses.map((bonus) => (
-                      <li key={bonus.name} className="flex gap-3 text-[14px] leading-snug text-white/85">
-                        <Gift className="mt-0.5 h-4 w-4 shrink-0 text-gold/80" />
-                        <span className="flex-1">{bonus.name}</span>
-                        <span className="shrink-0 font-mono text-[12px] text-white/70">{formatNaira(bonus.value)}</span>
-                      </li>
-                    ))}
-                    {pkg.key !== "basic" && (
-                      <li className="pl-7 font-mono text-[11px] uppercase tracking-wider text-white/85">
-                        + every bonus in {pkg.key === "standard" ? "Basic" : "Basic and Standard"}
-                      </li>
-                    )}
-                  </ul>
-
                   <div className="mt-auto">
-                    <ChoosePackageButton pkg={pkg.key} label={`I want ${pkg.name}`} featured={pkg.popular} />
+                    <ChoosePackageButton pkg={pkg.key} label="Choose this" featured={pkg.popular} />
                   </div>
                 </article>
               </div>
@@ -749,14 +697,14 @@ export default function WritingPage() {
 
         {/* Price reason + scarcity */}
         <Section tone="mist">
-          <H2>Why the prices are this low right now</H2>
+          <H2>Why the price depends on your experience</H2>
           <Prose
             className="mt-10"
             lines={[
-              "The work we do for you is worth what you pay on its own. The blueprints and tools come free on top of it.",
-              "We keep prices low because we only take a limited number of clients each month. That's how every CV gets proper attention instead of being rushed.",
-              "**Once this month's slots are full, prices go back to ₦35,000, ₦80,000 and ₦150,000.**",
-              "Filling the form doesn't lock you into anything, but it does put you in the queue while there are still slots at these prices.",
+              "A CV for someone with 2 years of work is shorter and quicker to get right.",
+              "With 10 or 15 years, there's a lot more to go through. Picking what to keep and what to leave out is where most of the time goes.",
+              "**So you only pay for the work your CV needs. Someone who just started working never pays what someone with 15 years pays.**",
+              "We only take a limited number of clients each month. That's how every CV gets proper attention instead of being rushed.",
             ]}
           />
         </Section>
@@ -781,8 +729,8 @@ export default function WritingPage() {
                 className="mt-8 text-left"
                 lines={[
                   "We can't promise you a job. Nobody honest can. What we can promise is this.",
-                  "Use exactly what we give you for 90 days. Apply to at least 30 roles, in Nigeria or remote, and send the follow-up messages we wrote for you. Keep the one-page log we include.",
-                  "If you haven't had a single response from a recruiter or employer by then, send us your log. We'll keep working with you for free until you do.",
+                  "Use the CV we write for you for 90 days. Apply to at least 30 roles, in Nigeria or remote, and keep a simple list of where you applied and when.",
+                  "If you haven't had a single response from a recruiter or employer by then, send us your list. We'll keep working on your CV for free until you do.",
                   "We can put this in writing because we've done this work more than 200 times. In our experience, the people who never get a response are the ones who don't use what we give them.",
                 ]}
               />
@@ -790,27 +738,9 @@ export default function WritingPage() {
           </div>
         </Section>
 
-        {/* LinkedIn before/after + more videos */}
+        {/* More videos */}
         <Section tone="mist">
-          <H2>What a rebuilt LinkedIn profile looks like</H2>
-          <Prose className="mt-10 text-center" lines={["These are real before and after shots from two Standard clients."]} />
-          <div className="mx-auto mt-14 grid max-w-6xl gap-6 lg:grid-cols-2">
-            {LINKEDIN.map((c, i) => (
-              <figure
-                key={c.name}
-                data-reveal
-                style={delay(i * 120)}
-                className="flex flex-col rounded-[2rem] bg-white p-5 shadow-[0_20px_50px_-30px_rgba(6,13,41,0.3)] ring-1 ring-ink-900/[0.06] sm:p-7"
-              >
-                <BeforeAfter name={c.name} before={c.before} after={c.after} />
-                <blockquote className="mt-6 flex-1 text-[16px] leading-[1.7] text-ink-600">&ldquo;{c.quote}&rdquo;</blockquote>
-                <figcaption className="mt-4 font-display text-sm font-semibold text-ink-900">
-                  {c.name} <span className="font-mono text-[11px] font-normal uppercase tracking-wider text-ink-600">· {c.place}</span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-          <div className="mt-24">
+          <div>
             <H2 className="sm:text-4xl">More clients, in their own words</H2>
             <VideoGrid videos={VIDEOS_BOTTOM} />
             <div className="mx-auto mt-6 max-w-4xl">
@@ -897,8 +827,8 @@ export default function WritingPage() {
                 openings from companies that ask us to recommend people.
               </p>
               <p data-reveal>
-                <span className="mr-1 font-mono text-[13px] font-semibold text-ink-900">P.P.P.S.</span> Your CV, LinkedIn
-                profile or portfolio comes with unlimited revisions, and the 90-day guarantee covers you after that. Your
+                <span className="mr-1 font-mono text-[13px] font-semibold text-ink-900">P.P.P.S.</span> Your CV and cover
+                letter come with unlimited revisions, and the 90-day guarantee covers you after that. Your
                 deposit comes off your total fee, so the only risk is staying where you are.
               </p>
             </div>

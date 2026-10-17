@@ -2,97 +2,41 @@
 // page's hidden price sheet), these figures are meant to be shown on the
 // page: /writing qualifies leads on price before they reach WhatsApp.
 
-export type PackageKey = "basic" | "standard" | "premium";
+// One package per experience level. Every level gets the same work, a CV
+// written for the job you want, and a cover letter is an optional add-on.
+// Longer careers cost more because there's more to sort through and cut.
+export type PackageKey = "early" | "mid" | "senior" | "exec";
 
 export type WritingPackage = {
   key: PackageKey;
   name: string;
-  system: string;
+  years: string;
   price: number;
+  // Added to the price when the visitor ticks "add a cover letter".
+  coverLetter: number;
   // Paid by bank transfer before the WhatsApp chat starts, then taken off
   // the price. It filters out people who aren't ready to buy yet.
   deposit: number;
-  // How the form's "what do you want us to do" question names this package.
-  service: string;
   delivery: string;
   popular?: boolean;
-  // false: the card's bonus total and struck-through value count only
-  // this package's own bonuses, not the ones from cheaper packages.
-  countLowerBonuses?: boolean;
-  work: string[];
-  bonuses: Bonus[];
 };
-
-// Bonus values are placeholder estimates, set so they can be changed in one
-// place. Update them here when the real figures are decided.
-export type Bonus = { name: string; value: number };
 
 // The one number this page sends leads to. Deliberately not the rotating
 // pair in lib/whatsapp.ts.
 export const WRITING_NUMBER = "2348074071356";
 
 export const PACKAGES: WritingPackage[] = [
-  {
-    key: "basic",
-    name: "Basic",
-    system: "The Get-Replies System",
-    price: 20000,
-    deposit: 3000,
-    service: "CV + cover letter",
-    delivery: "24 to 48 hours",
-    work: [
-      "Your CV and cover letter rewritten so the screening software companies use, in Nigeria and abroad, can read them properly",
-      "Written around the exact job you're going for, with your results on show instead of just your duties",
-    ],
-    bonuses: [
-      { name: "The \"Why Employers Ghost Good People\" blueprint, a 28-day plan for turning a silent inbox into interview invites", value: 10000 },
-      { name: "50 fill-in-the-blank CV bullet points", value: 5000 },
-      { name: "The Un-Ghost follow-up scripts: ready-made messages to send when a company goes quiet", value: 5000 },
-      { name: "The cover letter swipe file: sample cover letters you can copy and change to fit any job", value: 5000 },
-    ],
-  },
-  {
-    key: "standard",
-    name: "Standard",
-    system: "The Get-Found System",
-    price: 50000,
-    deposit: 5000,
-    service: "CV + cover letter + LinkedIn optimization",
-    delivery: "4 to 6 days",
-    popular: true,
-    work: [
-      "Everything in Basic",
-      "Your LinkedIn profile rebuilt so recruiters in Nigeria and abroad can find you and want to message you",
-    ],
-    bonuses: [
-      { name: "The \"How to Make Recruiters Message You First\" blueprint", value: 15000 },
-      { name: "Recruiter message scripts: what to say when you message a recruiter on LinkedIn", value: 7500 },
-      { name: "The 30-day LinkedIn visibility calendar: what to post each day so recruiters notice you", value: 7500 },
-      { name: "The cold email pack, for reaching the person who makes the hiring decision, even for remote roles abroad", value: 10000 },
-    ],
-  },
-  {
-    key: "premium",
-    name: "Premium",
-    system: "The Get-Hired System",
-    price: 80000,
-    deposit: 5000,
-    service: "CV + cover letter + LinkedIn optimization + portfolio website",
-    // Priced on its own bonuses only (80k + 70k = 150k). The Basic and
-    // Standard bonuses still come with it, shown as unpriced extras.
-    countLowerBonuses: false,
-    delivery: "7 to 10 days",
-    work: [
-      "Everything in Standard",
-      "A portfolio website with a few pages that show employers what you do, how you do it, and who you've done it for",
-    ],
-    bonuses: [
-      { name: "The \"Hidden Reason You Keep Losing Jobs You Had Already Won\" blueprint", value: 25000 },
-      { name: "The AI mock interview pack: practice interview questions you can run with ChatGPT before the real one", value: 15000 },
-      { name: "Salary negotiation scripts, for naira or dollars", value: 15000 },
-      { name: "The get-paid-in-dollars setup guide", value: 15000 },
-    ],
-  },
+  { key: "early", name: "Early career", years: "0 to 3 years", price: 10000, coverLetter: 3000, deposit: 3000, delivery: "24 to 48 hours" },
+  { key: "mid", name: "Mid career", years: "4 to 7 years", price: 15000, coverLetter: 5000, deposit: 3000, delivery: "24 to 48 hours", popular: true },
+  { key: "senior", name: "Senior", years: "8 to 12 years", price: 25000, coverLetter: 7000, deposit: 5000, delivery: "24 to 48 hours" },
+  { key: "exec", name: "Leadership", years: "12+ years", price: 40000, coverLetter: 10000, deposit: 5000, delivery: "24 to 48 hours" },
+];
+
+// What every level gets, shown on each card.
+export const PACKAGE_WORK = [
+  "Your CV rewritten so the screening software companies use, in Nigeria and abroad, can read it properly",
+  "Written around the exact job you're going for, with your results on show instead of just your duties",
+  "Unlimited changes until you're happy with it",
 ];
 
 export const LOCATION_OPTIONS = [
@@ -117,16 +61,22 @@ export function getPackage(key: PackageKey): WritingPackage {
   return PACKAGES.find((p) => p.key === key)!;
 }
 
-export function packageLabel(key: PackageKey): string {
+export function orderTotal(key: PackageKey, coverLetter: boolean): number {
   const pkg = getPackage(key);
-  return `${pkg.name}, ${pkg.system} (${formatNaira(pkg.price)})`;
+  return pkg.price + (coverLetter ? pkg.coverLetter : 0);
+}
+
+export function orderLabel(key: PackageKey, coverLetter: boolean): string {
+  const pkg = getPackage(key);
+  const what = coverLetter ? "CV + cover letter" : "CV";
+  return `${what}, ${pkg.name}, ${pkg.years} (${formatNaira(orderTotal(key, coverLetter))})`;
 }
 
 // The price line the visitor confirms on the form, repeated in their own
 // WhatsApp message so the cost is already settled before the chat starts.
-export function priceConfirmation(key: PackageKey): string {
-  const pkg = getPackage(key);
-  return `I understand ${pkg.name} costs ${formatNaira(pkg.price)} and I'm ready to pay now.`;
+export function priceConfirmation(key: PackageKey, coverLetter: boolean): string {
+  const what = coverLetter ? "my CV and cover letter cost" : "my CV costs";
+  return `I understand ${what} ${formatNaira(orderTotal(key, coverLetter))} and I'm ready to pay now.`;
 }
 
 export type WritingAnswers = {
@@ -134,6 +84,7 @@ export type WritingAnswers = {
   role: string;
   location: string;
   choice: PackageKey;
+  coverLetter: boolean;
 };
 
 export type WritingLead = WritingAnswers & {
@@ -145,7 +96,13 @@ export type WritingLead = WritingAnswers & {
 // The form's answers travel to /writing/deposit (and back, for "change my
 // answers") in the query string, so a refresh never loses them.
 export function answersQuery(a: WritingAnswers): string {
-  return new URLSearchParams({ p: a.choice, name: a.name, role: a.role, loc: a.location }).toString();
+  return new URLSearchParams({
+    p: a.choice,
+    cl: a.coverLetter ? "1" : "0",
+    name: a.name,
+    role: a.role,
+    loc: a.location,
+  }).toString();
 }
 
 // Null when anything is missing or not one of the form's own options.
@@ -158,7 +115,7 @@ export function parseAnswers(search: string): WritingAnswers | null {
   if (!PACKAGES.some((p) => p.key === choice)) return null;
   if (!(LOCATION_OPTIONS as readonly string[]).includes(location)) return null;
   if (name === "" || role === "") return null;
-  return { name, role, location, choice: choice as PackageKey };
+  return { name, role, location, choice: choice as PackageKey, coverLetter: q.get("cl") === "1" };
 }
 
 export function buildWritingMessage(lead: WritingLead): string {
@@ -171,30 +128,14 @@ export function buildWritingMessage(lead: WritingLead): string {
     "*Where I want to work:*",
     lead.location,
     "",
-    "*Package:*",
-    packageLabel(lead.choice),
+    "*What I want:*",
+    orderLabel(lead.choice, lead.coverLetter),
     "",
-    `*Price:* ${priceConfirmation(lead.choice)}`,
+    `*Price:* ${priceConfirmation(lead.choice, lead.coverLetter)}`,
     "",
     "*Deposit:*",
     `I've paid my ${formatNaira(getPackage(lead.choice).deposit)} deposit from the account of ${lead.paidFrom}. My receipt is below.`,
     "",
     "What do you need from me to get started?",
   ].join("\n");
-}
-
-// Total value of the free bonuses a package comes with, counting the
-// bonuses from the cheaper packages it includes ("Everything in Basic").
-export function totalBonusValue(key: PackageKey): number {
-  const upTo = PACKAGES.findIndex((p) => p.key === key);
-  const from = PACKAGES[upTo].countLowerBonuses === false ? upTo : 0;
-  return PACKAGES.slice(from, upTo + 1)
-    .flatMap((p) => p.bonuses)
-    .reduce((sum, b) => sum + b.value, 0);
-}
-
-// What the card shows struck through: the price plus everything in the
-// bonus stack, so the real price reads as the discount.
-export function totalValue(pkg: WritingPackage): number {
-  return pkg.price + totalBonusValue(pkg.key);
 }

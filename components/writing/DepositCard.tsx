@@ -11,6 +11,7 @@ import {
   buildWritingMessage,
   formatNaira,
   getPackage,
+  orderTotal,
   parseAnswers,
   WRITING_NUMBER,
 } from "@/lib/writingPackages";
@@ -69,7 +70,8 @@ export default function DepositCard() {
   }
 
   const pkg = getPackage(answers.choice);
-  const after = pkg.price - pkg.deposit;
+  const total = orderTotal(answers.choice, answers.coverLetter);
+  const after = total - pkg.deposit;
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -78,7 +80,7 @@ export default function DepositCard() {
 
     const message = buildWritingMessage({ ...answers, paidFrom: paidFrom.trim() });
     window.open(generateWhatsAppLink(WRITING_NUMBER, message), "_blank", "noopener,noreferrer");
-    trackWritingSubmit({ packageName: pkg.name, value: pkg.price });
+    trackWritingSubmit({ packageName: pkg.name, value: total });
   };
 
   return (
@@ -97,14 +99,14 @@ export default function DepositCard() {
           Pay your {formatNaira(pkg.deposit)} deposit
         </h1>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-900/85">
-          This money is part of your {formatNaira(pkg.price)}. After this, you pay {formatNaira(after)}. Send it to
+          This money is part of your {formatNaira(total)}. After this, you pay {formatNaira(after)}. Send it to
           any one of these bank accounts.
         </p>
       </div>
 
       <div data-testid="deposit-summary" className="grid grid-cols-3 gap-2 text-center">
         {[
-          ["Package", pkg.name],
+          ["Total", formatNaira(total)],
           ["Pay now", formatNaira(pkg.deposit)],
           ["Pay after", formatNaira(after)],
         ].map(([label, value]) => (
